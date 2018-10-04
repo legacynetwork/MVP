@@ -77,7 +77,7 @@ contract Legacy is Owned{
         // TODO: check if input data is valid
         beneficiaryData[_beneficiary].messageUrl = _messageUrl;
         beneficiaryData[_beneficiary].shareOfFunds = _shareOfFunds;
-        beneficiaries.push(_beneficiary);
+        if(!isBeneficiary(_beneficiary)) beneficiaries.push(_beneficiary);        
         resetPoLTimer();
     }
 
