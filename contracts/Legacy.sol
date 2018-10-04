@@ -36,11 +36,11 @@ contract Legacy is Owned{
 
     mapping(address => Beneficiary) public beneficiaryData;
     
-    constructor(uint256 _tPoL) public {        
+    constructor(uint256 _tPoL) public {
         if(_tPoL > 0) tPoL = _tPoL * 1 days;
         else tPoL = DEFAULT_T_POL;
         
-        tZero = now + tPoL;        
+        tZero = now + tPoL;
      }
 
     function() public payable {
@@ -77,7 +77,7 @@ contract Legacy is Owned{
         // TODO: check if input data is valid
         beneficiaryData[_beneficiary].messageUrl = _messageUrl;
         beneficiaryData[_beneficiary].shareOfFunds = _shareOfFunds;
-        if(!isBeneficiary(_beneficiary)) beneficiaries.push(_beneficiary);        
+        if(!isBeneficiary(_beneficiary)) beneficiaries.push(_beneficiary);
         resetPoLTimer();
     }
 
