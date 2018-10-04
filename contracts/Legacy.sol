@@ -20,6 +20,9 @@ contract Owned {
 
 
 contract Legacy is Owned{
+
+    // constant parameters
+    uint256 constant DEFAULT_T_POL = 90 * 1 days;
     
     // state variables    
     uint256 public tPoL;
@@ -35,6 +38,8 @@ contract Legacy is Owned{
     
     constructor(uint256 _tPoL) public {        
         if(_tPoL > 0) tPoL = _tPoL * 1 days;
+        else tPoL = DEFAULT_T_POL;
+        
         tZero = now + tPoL;        
      }
 
@@ -65,7 +70,7 @@ contract Legacy is Owned{
     function claimFunds(address _beneficiary) public {
         require(isBeneficiary(_beneficiary));
         require(!getProofOfLife());
-        _beneficiary.transfer(this.balance/beneficiaries.length);
+        _beneficiary.transfer(address(this).balance/beneficiaries.length);
     }
     
     function addBeneficiary(address _beneficiary, string _messageUrl, uint256 _shareOfFunds) public onlyOwner {
@@ -84,7 +89,7 @@ contract Legacy is Owned{
     }    
 
     function withdraw(uint amount) public onlyOwner {
-        if (this.balance >= amount) {
+        if (address(this).balance >= amount) {
             msg.sender.transfer(amount);
         }
         resetPoLTimer();
