@@ -9,11 +9,11 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
+    "truffle-contract": "^3.0.0",
     "vue": "^2.5.3",
     "vue-router": "^3.0.1",
     "vuetify": "^1.0.0",
-    "web3": "0.20.2",
-    "truffle-contract": "^3.0.0"
+    "web3": "0.20.2"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
