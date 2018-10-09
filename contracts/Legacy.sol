@@ -80,7 +80,7 @@ contract Legacy is Owned{
     function deleteBeneficiary(address _beneficiary) public onlyOwner {
         delete beneficiaryData[_beneficiary];
         int8 index = -1;
-        for (uint8 i = 0; i < beneficiaries.length; i++) {
+        for (uint8 i = 0; i < uint8(beneficiaries.length); i++) {
             if (beneficiaries[i] == _beneficiary) {
                 //delete beneficiaries[i]; // just reinitializes b[i] to default value
                 index = int8(i);
@@ -88,9 +88,10 @@ contract Legacy is Owned{
             }
         }
         if (index > -1) {
-            for (i = uint8(index); i < beneficiaries.length; i++) {
+            for (i = uint8(index); i < uint8(beneficiaries.length-1); i++) {
                 beneficiaries[i] = beneficiaries[i+1];
             }
+            //delete beneficiaries[beneficiaries.length-1]; // this should save gas
             beneficiaries.length--;
         }
     }
