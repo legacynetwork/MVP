@@ -1,6 +1,8 @@
 var Legacy = artifacts.require("./Legacy.sol");
 
-module.exports = function (deployer) {
+module.exports = function (deployer, network, accounts) {
   var tPoL = 90;
-  deployer.deploy(Legacy, tPoL);
+  var beneficiaries = [];
+  var messageAdds = []
+  deployer.deploy(Legacy, tPoL, beneficiaries, messageAdds);
 };

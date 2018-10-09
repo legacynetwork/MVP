@@ -1,6 +1,5 @@
 const Legacy = artifacts.require("Legacy");
 
-// const ERROR_MSG = 'VM Exception while processing transaction: revert';
 
 contract('Legacy basic test', async (accounts) => {
 
@@ -69,10 +68,14 @@ contract('Legacy basic test', async (accounts) => {
 
   it("should be able to add beneficiaries", async () => {
     let instance = await Legacy.deployed();
-    let messageId = "QmUNLLsPACCz1vLxQVkXqqLX6R1X256qqfHbsf67hvA4Nn";    
-    await instance.addBeneficiary(accounts[1], messageId);
-    let newBeneficiary  = await instance.beneficiaryData.call(accounts[1]);    
-    assert.equal(newBeneficiary.valueOf(), messageId, "Unexpected messageId value");
+    let messageAdds = ["0x7d5a99f603f231d53a4f39d1521f98d2e8bb279cf29bebfd0687dc98458e7f89",
+    	"0x5d5a29f603f231d53a4f39d1521f98d2e8bb279cf29bebfd0687dc98458e7f80"];
+    let beneficiaries = [accounts[1], accounts[2]];
+    await instance.addBeneficiaries(beneficiaries, messageAdds);
+    let newBenefAdd1  = await instance.beneficiaryData.call(accounts[1]);
+    let newBenefAdd2  = await instance.beneficiaryData.call(accounts[2]);
+    assert.equal(newBenefAdd1.valueOf(), messageAdds[0], "Unexpected message address");
+    assert.equal(newBenefAdd2.valueOf(), messageAdds[1], "Unexpected message address");
   });  
 
   it("should check beneficiary exists", async () => {

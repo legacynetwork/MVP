@@ -28,15 +28,14 @@ contract Legacy is Owned{
     uint256 public tPoL;
     uint256 public tZero;       
     address[] public beneficiaries;
-    
-    // TODO: used fixed length bytes array
-    mapping(address => string) public beneficiaryData;
-    
-    constructor(uint256 _tPoL) public {
-        if(_tPoL > 0) tPoL = _tPoL * 1 days;
-        else tPoL = DEFAULT_T_POL;
         
+    mapping(address => bytes32) public beneficiaryData;
+    
+    constructor(uint256 _tPoL, address[] _beneficiaries, bytes32[] _messageAdds) public {
+        if(_tPoL > 0) tPoL = _tPoL * 1 days;
+        else tPoL = DEFAULT_T_POL;        
         tZero = now + tPoL;
+        addBeneficiaries(_beneficiaries, _messageAdds);
      }
 
     function() public payable {
@@ -70,10 +69,12 @@ contract Legacy is Owned{
         deleteBeneficiary(_beneficiary);
     }
     
-    function addBeneficiary(address _beneficiary, string _messageUrl) public onlyOwner {
+    function addBeneficiaries(address[] _beneficiaries, bytes32[] _messageAdds) public onlyOwner {
         // TODO: check if input data is valid
-        beneficiaryData[_beneficiary]  = _messageUrl;        
-        if(!isBeneficiary(_beneficiary)) beneficiaries.push(_beneficiary);
+        for (uint8 i = 0; i < _beneficiaries.length; i++) {
+            beneficiaryData[_beneficiaries[i]]  = _messageAdds[i];
+            if(!isBeneficiary(_beneficiaries[i])) beneficiaries.push(_beneficiaries[i]);
+        }                
         resetPoLTimer();
     }
 
