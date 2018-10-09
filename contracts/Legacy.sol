@@ -28,13 +28,9 @@ contract Legacy is Owned{
     uint256 public tPoL;
     uint256 public tZero;       
     address[] public beneficiaries;
-
-    struct Beneficiary{
-        uint256 shareOfFunds;
-        string messageUrl; // ipfs url, only one message per beneficiary for now
-    }
-
-    mapping(address => Beneficiary) public beneficiaryData;
+    
+    // TODO: used fixed length bytes array
+    mapping(address => string) public beneficiaryData;
     
     constructor(uint256 _tPoL) public {
         if(_tPoL > 0) tPoL = _tPoL * 1 days;
@@ -74,10 +70,9 @@ contract Legacy is Owned{
         deleteBeneficiary(_beneficiary);
     }
     
-    function addBeneficiary(address _beneficiary, string _messageUrl, uint256 _shareOfFunds) public onlyOwner {
+    function addBeneficiary(address _beneficiary, string _messageUrl) public onlyOwner {
         // TODO: check if input data is valid
-        beneficiaryData[_beneficiary].messageUrl = _messageUrl;
-        beneficiaryData[_beneficiary].shareOfFunds = _shareOfFunds;
+        beneficiaryData[_beneficiary]  = _messageUrl;        
         if(!isBeneficiary(_beneficiary)) beneficiaries.push(_beneficiary);
         resetPoLTimer();
     }
@@ -85,15 +80,15 @@ contract Legacy is Owned{
     function deleteBeneficiary(address _beneficiary) public onlyOwner {
         delete beneficiaryData[_beneficiary];
         int8 index = -1;
-        for(uint8 i = 0; i < beneficiaries.length; i++) {
+        for (uint8 i = 0; i < beneficiaries.length; i++) {
             if (beneficiaries[i] == _beneficiary) {
                 //delete beneficiaries[i]; // just reinitializes b[i] to default value
-                index = i;
+                index = int8(i);
                 break;
-            };
+            }
         }
-        if(index > -1) {
-            for (i = index; i < beneficiaries.length; i++) {
+        if (index > -1) {
+            for (i = uint8(index); i < beneficiaries.length; i++) {
                 beneficiaries[i] = beneficiaries[i+1];
             }
             beneficiaries.length--;
