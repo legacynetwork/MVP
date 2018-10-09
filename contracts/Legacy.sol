@@ -71,6 +71,7 @@ contract Legacy is Owned{
         require(isBeneficiary(_beneficiary));
         require(!getProofOfLife());
         _beneficiary.transfer(address(this).balance/beneficiaries.length);
+        deleteBeneficiary(_beneficiary);
     }
     
     function addBeneficiary(address _beneficiary, string _messageUrl, uint256 _shareOfFunds) public onlyOwner {
@@ -79,6 +80,24 @@ contract Legacy is Owned{
         beneficiaryData[_beneficiary].shareOfFunds = _shareOfFunds;
         if(!isBeneficiary(_beneficiary)) beneficiaries.push(_beneficiary);
         resetPoLTimer();
+    }
+
+    function deleteBeneficiary(address _beneficiary) public onlyOwner {
+        delete beneficiaryData[_beneficiary];
+        int8 index = -1;
+        for(uint8 i = 0; i < beneficiaries.length; i++) {
+            if (beneficiaries[i] == _beneficiary) {
+                //delete beneficiaries[i]; // just reinitializes b[i] to default value
+                index = i;
+                break;
+            };
+        }
+        if(index > -1) {
+            for (i = index; i < beneficiaries.length; i++) {
+                beneficiaries[i] = beneficiaries[i+1];
+            }
+            beneficiaries.length--;
+        }
     }
 
     function isBeneficiary(address _beneficiary) public view returns(bool) {
