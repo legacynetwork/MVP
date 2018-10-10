@@ -149,9 +149,8 @@
         ],
         ethAddressRules: [
           v => !!v || 'ETH address is required',
-          // v => web3.utils.isAddress(v)
           v => /^(0x){1}[0-9a-fA-F]{40}$/i.test(v) || 'ETH address must be valid'
-        ],        
+        ]   
       }
     },
     methods: {
@@ -163,7 +162,6 @@
         this.$refs.form.reset()
       },      
       addEthAddress: function() {
-        // var elem = document.createElement('tr');
         this.heirsAddresses.push({
           ethAddress: "",
           file: {
@@ -172,7 +170,6 @@
         });
       },
       addRow: function() {
-        // var elem = document.createElement('tr');
         this.uploadedFiles.push({
           title: "",
           description: "",
