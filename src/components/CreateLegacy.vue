@@ -27,25 +27,25 @@
               required
             ></v-text-field>            
 
-            <h2>Your heirs</h2>
+            <h2>Your beneficiaries</h2>
             <v-flex  
-              v-for="(row, i) in heirsAddresses"
+              v-for="(row, i) in beneficiarieAddresses"
               :key="`A-${i}`"
               >
               <v-layout align-center row wrap>
-                <v-flex d-flex xs11 sm4>
-                  <v-text-field v-model="row.heirName"
-                                label="Heir name"
-                  ></v-text-field>
-                </v-flex>
-                <v-flex d-flex xs11 sm6>
+                <v-flex d-flex xs11 sm5>
                   <v-text-field v-model="row.ethAddress"
-                                label="Heir address"
+                                label="Beneficiary address"
                                 :error-messages="ethAddressErrors"
                                 :counter="42"
                                 :rules="ethAddressRules"                                
                   ></v-text-field>
                 </v-flex>
+                <v-flex d-flex xs11 sm6>
+                  <v-text-field v-model="row.beneficiaryMessage"
+                                label="Beneficiary message"
+                  ></v-text-field>
+                </v-flex>                
                 <v-btn
                     @click="removeEthAddress(`A-${i}`);"
                     color="red"
@@ -66,59 +66,10 @@
                 class="teal lighten-5"
               >
                 <v-icon>add</v-icon>
-                <span>Add heir address</span>
+                <span>Add beneficiary</span>
               </v-btn>
             </v-flex>
-
-            <h2>Your files</h2>
-            <v-flex  
-              v-for="(row, index) in uploadedFiles"
-              v-bind:key='index'
-              >
-              <v-layout align-center row wrap>
-                <v-flex d-flex xs11 sm3>
-                  <v-text-field v-model="row.title"
-                                label="File name"
-                  ></v-text-field>
-                </v-flex>
-                <v-flex d-flex xs11 sm3>
-                  <v-text-field v-model="row.description"
-                                label="Description"
-                  ></v-text-field>
-                </v-flex>      
-                <v-flex d-flex xs11 sm4>
-                  <label class="fileContainer v-btn blue-grey white--text">
-                      {{row.file.name}}
-                    <input type="file" @change="setFilename($event, row)" :id="index"/>
-                  </label>
-                </v-flex>
-                <!-- <v-avatar color="red red--after">
-                  <a v-on:click="removeElement(index);" style="cursor: pointer"><v-icon dark>clear</v-icon></a>
-                </v-avatar> -->
-                  <v-btn
-                    @click="removeFileRow(index);"
-                    color="red"
-                    flat
-                    value="recent"
-                    class="red lighten-5"
-                  >
-                    <v-icon>clear</v-icon>
-                  </v-btn>
-              </v-layout>
-            </v-flex> 
-            <v-flex>
-              <v-btn
-                @click="addRow"
-                color="teal"
-                flat
-                value="recent"
-                class="teal lighten-5"
-              >
-                <v-icon>add</v-icon>
-                <span>Add file</span>
-              </v-btn>
-            </v-flex>
-
+            
             <v-btn @click="submit" color="success">submit</v-btn>
             <v-btn @click="clear" color="warning">clear</v-btn>
           </v-form>
@@ -142,7 +93,7 @@
         emailErrors: '',
         ethAddressErrors: '',
         uploadedFiles: [],
-        heirsAddresses: [],
+        beneficiarieAddresses: [],
         emailRules: [
           v => !!v || 'E-mail is required',
           v => /.+@.+/.test(v) || 'E-mail must be valid'
@@ -162,7 +113,7 @@
         this.$refs.form.reset()
       },      
       addEthAddress: function() {
-        this.heirsAddresses.push({
+        this.beneficiarieAddresses.push({
           ethAddress: "",
           file: {
               name: 'ETH address'
@@ -182,7 +133,7 @@
         this.uploadedFiles.splice(index, 1);
       },
       removeEthAddress: function(index) {
-        this.heirsAddresses.splice(index, 1);
+        this.beneficiarieAddresses.splice(index, 1);
       },      
       setFilename: function(event, row) {
         var file = event.target.files[0];
