@@ -49,6 +49,11 @@ const Legacy = {
       })
     })
   },
+  checkLegacy: function (heirEthAddress, legacyContractEthAddress) {
+    let self = this
+
+    return "true"
+  }
 }
 
 export default Legacy
