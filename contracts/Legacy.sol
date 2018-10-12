@@ -42,6 +42,10 @@ contract Legacy is Owned{
         if(msg.sender == owner) resetPoLTimer();
     }
 
+    function getOwner() public view returns(address) {
+        return owner;
+    }
+
     function giveProofOfLife() public onlyOwner {
         resetPoLTimer();
     }
