@@ -7,7 +7,7 @@ const util = {
     // first 2 bytes are hash function identifier and length
     let multiHashIdLen = 2;
     // remove the multihash hash id
-    return '0x' + bytes.slice(multiHashIdLen, bytes.length);
+    return '0x' + bytes.slice(multiHashIdLen, bytes.length).toString('hex');
   },
 
   // TODO
