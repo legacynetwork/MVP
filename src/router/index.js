@@ -4,6 +4,7 @@ import CreateLegacy from '@/components/CreateLegacy'
 import EditLegacy from '@/components/EditLegacy'
 import CheckLegacy from '@/components/CheckLegacy'
 import GetMyLegacy from '@/components/GetMyLegacy'
+import TestIpfs from '@/components/TestIpfs'
 
 Vue.use(Router)
 
@@ -33,6 +34,11 @@ export default new Router({
       path: '/getMyLegacy',
       name: 'getMyLegacy',
       component: GetMyLegacy
+    },
+    {
+      path: '/TestIpfs',
+      name: 'TestIpfs',
+      component: TestIpfs
     }
   ]
 })
