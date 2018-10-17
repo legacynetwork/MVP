@@ -5,6 +5,7 @@ import EditLegacy from '@/components/EditLegacy'
 import CheckLegacy from '@/components/CheckLegacy'
 import GetMyLegacy from '@/components/GetMyLegacy'
 import TestIpfs from '@/components/TestIpfs'
+import TestBlockchain from '@/components/TestBlockchain'
 
 Vue.use(Router)
 
@@ -39,6 +40,11 @@ export default new Router({
       path: '/TestIpfs',
       name: 'TestIpfs',
       component: TestIpfs
+    },
+    {
+      path: '/TestBlockchain',
+      name: 'TestBlockchain',
+      component: TestBlockchain
     }
   ]
 })

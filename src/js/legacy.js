@@ -23,6 +23,24 @@ const Legacy = {
     })
   },
 
+  createContract: function (benefAdds, messAdds) {
+    let self = this;
+
+    return new Promise(function (resolve, reject) {      
+
+      let tPoL = 30
+      let beneficiaries = []
+      let messageAdds = []      
+      self.contract.new(tPoL, beneficiaries, messageAdds, { from: window.web3.eth.accounts[0], gas: 3000000 }).then(instance => {        
+        self.instance = instance;
+        console.log("Newly created contract address: " + instance.address);
+        resolve();
+      }).catch(err => {
+        reject(err);
+      })
+    })
+  }, 
+
   getOwnerAddress: function () {
     let self = this;
 
@@ -54,7 +72,7 @@ const Legacy = {
     let self = this
 
     return new Promise((resolve, reject) => {
-      self.instance.addBeneficiaries(benefAdds, messAdds, { from: window.web3.eth.accounts[0], gas: 3000000 })      
+      self.instance.addBeneficiaries(benefAdds, messAdds, { from: window.web3.eth.accounts[0], gas: 3000000 })
       .catch(err => {
         reject(err);
       })
