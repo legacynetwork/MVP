@@ -28,10 +28,9 @@ const Legacy = {
 
     return new Promise(function (resolve, reject) {      
 
-      let tPoL = 30
-      let beneficiaries = []
-      let messageAdds = []      
-      self.contract.new(tPoL, beneficiaries, messageAdds, { from: window.web3.eth.accounts[0], gas: 3000000 }).then(instance => {        
+      console.log(benefAdds, messAdds)
+      let tPoL = 0 // will use default timer length      
+      self.contract.new(tPoL, benefAdds, messAdds, { from: window.web3.eth.accounts[0], gas: 3000000 }).then(instance => {        
         self.instance = instance;
         console.log("Newly created contract address: " + instance.address);
         resolve();
@@ -87,6 +86,20 @@ const Legacy = {
       self.instance.beneficiaries.call(index)
       .then(tx => {
         resolve(tx);        
+      }).catch(err => {
+        reject(err);
+      })
+    })
+
+  },
+
+  getBeneficiaryMessageAddress: function(beneficiaryAddress) {
+    let self = this
+
+    return new Promise((resolve, reject) => {
+      self.instance.beneficiaryData.call(beneficiaryAddress)
+      .then(messAdd => {
+        resolve(messAdd);        
       }).catch(err => {
         reject(err);
       })
