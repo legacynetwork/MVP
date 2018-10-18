@@ -29,7 +29,7 @@
 
             <h2>Your beneficiaries</h2>
             <v-flex  
-              v-for="(row, i) in beneficiarieAddresses"
+              v-for="(row, i) in beneficiaries"
               :key="`A-${i}`"
               >
               <v-layout align-center row wrap>
@@ -74,6 +74,54 @@
             <v-btn @click="clear" color="warning">clear</v-btn>
           </v-form>
         </v-flex>
+
+        <v-flex d-flex xs11 sm4 offset-xs1>
+          <v-btn @click.native="getOwnerAddress">Get owner address</v-btn>
+        </v-flex>
+        <v-flex xs3 sm6 text-xs-left offset-xs1>
+          <div>
+            Owner address : {{ownerAddress}}
+          </div>
+        </v-flex>
+
+         <v-flex d-flex xs11 sm4 offset-xs1>
+          <v-layout row wrap>
+            <v-flex xs12 sm4>
+              <v-text-field
+                label="ETH Address"
+                single-line
+                v-model="addressRequested"
+              ></v-text-field>
+            </v-flex>
+          </v-layout>
+        </v-flex>
+
+        <v-flex d-flex xs11 sm4 offset-xs1>
+          <v-btn @click.native="getBenefiaciesMessage">getBenefiaciesMessage</v-btn>
+        </v-flex>
+        <v-flex xs3 sm6 text-xs-left offset-xs1>
+          <div>
+            Benefiacies CID : {{beneficiariesMessages}}
+          </div>
+        </v-flex>
+
+        <v-flex d-flex xs11 sm4 offset-xs1>
+          <v-btn @click.native="getBenefiaciesAddresses">getBenefiaciesAddresses</v-btn>
+        </v-flex>
+        <v-flex xs3 sm6 text-xs-left offset-xs1>
+          <div>
+            Beneficiaries Addresses : {{beneficiariesAddresses}}
+          </div>
+        </v-flex>                
+
+        <v-flex d-flex xs11 sm4 offset-xs1>
+          <v-btn @click.native="deploy">Deploy</v-btn>
+        </v-flex>  
+
+        <v-flex d-flex xs11 sm4 offset-xs1>
+          <v-btn @click.native="newInstance">newInstance</v-btn>
+        </v-flex>    
+
       </v-layout>
     </v-container>
   </div>
@@ -93,7 +141,11 @@
         emailErrors: '',
         ethAddressErrors: '',
         uploadedFiles: [],
-        beneficiarieAddresses: [],
+        beneficiaries: [],
+        ownerAddress: '',
+        beneficiariesAddresses: [],
+        beneficiariesMessages: [],
+        addressRequested: '',
         emailRules: [
           v => !!v || 'E-mail is required',
           v => /.+@.+/.test(v) || 'E-mail must be valid'
@@ -104,6 +156,9 @@
         ]   
       }
     },
+    created: function () {
+      Legacy.init();
+    },
     methods: {
       submit () {
         if (this.$refs.form.validate()) {
@@ -111,9 +166,61 @@
       },
       clear () {
         this.$refs.form.reset()
+      },    
+      newInstance: function () {
+        console.log("New instance!")
+        Legacy.createInstance(10, this.formatBenefiariesAddresses(this.beneficiaries),this.formatBenefiariesMessages(this.beneficiaries)).then(instance => {
+            console.log(instance)
+          }).catch(err => {
+            console.log(err)
+          })
+      },    
+      deploy: function () {
+        console.log("Deploy!")
+        Legacy.deploy(10, [0x95424f81efa2f4c1687c560a2c0f6ec99e7cb91a], ['Salut']).then(instance => {
+            console.log(instance)
+          }).catch(err => {
+            console.log(err)
+          })
+      },    
+      getOwnerAddress: function () {
+        console.log("Get Owner address!")
+        Legacy.getOwnerAddress().then(ownerAddress => {
+          this.ownerAddress = ownerAddress
+          console.log("Address is: " + ownerAddress)
+        })
+      },            
+      getBenefiaciesAddresses: function () {
+        console.log("Get Owner address!")
+        Legacy.getBenefiaciesAddresses().then(beneficiariesAddresses => {
+          this.beneficiariesAddresses = beneficiariesAddresses
+          console.log("Address is: " + beneficiariesAddresses)
+        })
+      },  
+      getBenefiaciesMessage: function () {
+        console.log("Get Owner address!")
+        Legacy.getBenefiaciesMessage(this.addressRequested).then(beneficiariesMessages => {
+          this.beneficiariesMessages = beneficiariesMessages
+          console.log("Address is: " + beneficiariesMessages)
+        })
+      },              
+      formatBenefiariesAddresses: function(beneficiaries) {
+        var beneficiariesAddress = [];
+        for(var i=0; i < beneficiaries.length; i++ ){
+          beneficiariesAddress.push(beneficiaries[i].ethAddress);
+        }
+        return beneficiariesAddress;
+      },
+      formatBenefiariesMessages: function(beneficiaries) {
+        var beneficiariesCIDs = '';
+        for(var i=0; i < beneficiaries.length; i++ ){
+          beneficiariesCIDs = beneficiariesCIDs + beneficiaries[i].beneficiaryMessage + ';'
+        }
+        console.log("CIDs : " + beneficiariesCIDs);
+        return beneficiariesCIDs;
       },      
       addEthAddress: function() {
-        this.beneficiarieAddresses.push({
+        this.beneficiaries.push({
           ethAddress: "",
           file: {
               name: 'ETH address'
@@ -133,7 +240,7 @@
         this.uploadedFiles.splice(index, 1);
       },
       removeEthAddress: function(index) {
-        this.beneficiarieAddresses.splice(index, 1);
+        this.beneficiaries.splice(index, 1);
       },      
       setFilename: function(event, row) {
         var file = event.target.files[0];
