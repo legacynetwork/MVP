@@ -14,7 +14,7 @@ const Legacy = {
       self.contract = contract(LegacyContract);
       self.contract.setProvider(window.web3.currentProvider);
 
-      self.contract.deployed().then(instance => {        
+      self.contract.deployed().then(instance => {
         self.instance = instance;
         resolve();
       }).catch(err => {
@@ -27,7 +27,7 @@ const Legacy = {
     let self = this;
 
     return new Promise((resolve, reject) => {
-      self.instance.getOwner()        
+      self.instance.getOwner()
         .then(tx => {
           resolve(tx);
           console.log(tx);
@@ -54,7 +54,7 @@ const Legacy = {
     let self = this
 
     return new Promise((resolve, reject) => {
-      self.instance.addBeneficiaries(benefAdds, messAdds, { from: window.web3.eth.accounts[0], gas: 3000000 })      
+      self.instance.addBeneficiaries(benefAdds, messAdds, { from: window.web3.eth.accounts[0], gas: 3000000 })
       .catch(err => {
         reject(err);
       })
@@ -68,7 +68,21 @@ const Legacy = {
     return new Promise((resolve, reject) => {
       self.instance.beneficiaries.call(index)
       .then(tx => {
-        resolve(tx);        
+        resolve(tx);
+      }).catch(err => {
+        reject(err);
+      })
+    })
+
+  },
+
+  getMessageAddress: function(benefAdds) {
+    let self = this
+
+    return new Promise((resolve, reject) => {
+      self.instance.beneficiaryData.call(benefAdds)
+      .then(tx => {
+        resolve(tx);
       }).catch(err => {
         reject(err);
       })
