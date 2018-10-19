@@ -1,7 +1,5 @@
  // simplified contract prototype that does not implement encryption
 
-import "./strings.sol";
-
 pragma solidity ^0.4.24;
 
 
@@ -22,8 +20,6 @@ contract Owned {
 
 
 contract Legacy is Owned{
-    using strings for *;
-
 
     // constant parameters
     uint256 constant DEFAULT_T_POL = 90 * 1 days;
@@ -33,25 +29,17 @@ contract Legacy is Owned{
     uint256 public tZero;       
     address[] public beneficiaries;
         
-    mapping(address => string) public beneficiaryData;
+    mapping(address => bytes32) public beneficiaryData;
     
-    constructor(uint256 _tPoL, address[] _beneficiaries, string _CIDs) public {
-
+    constructor(uint256 _tPoL, address[] _beneficiaries, bytes32[] _messageAdds) public {
         if(_tPoL > 0) tPoL = _tPoL * 1 days;
         else tPoL = DEFAULT_T_POL;        
         tZero = now + tPoL;
-        addBeneficiaries(_beneficiaries, _CIDs);
+        addBeneficiaries(_beneficiaries, _messageAdds);
     }
-    
-    event LogStringArray(string stringArray);
-    event LogInt(uint256 integer);
 
     function() public payable {
         if(msg.sender == owner) resetPoLTimer();
-    }
-
-    function getOwner() public view returns(address) {
-        return owner;
     }
 
     function giveProofOfLife() public onlyOwner {
@@ -81,21 +69,12 @@ contract Legacy is Owned{
         deleteBeneficiary(_beneficiary);
     }
     
-    function addBeneficiaries(address[] _beneficiaries, string _CIDs) public onlyOwner {
-        
-        strings.slice memory s = _CIDs.toSlice();
-        strings.slice memory delim = ";".toSlice();
-        string[] memory CID = new string[](s.count(delim));
-        emit LogInt(s.count(delim));
-        for (uint i = 0; i < CID.length; i++) {
-            CID[i] = s.split(delim).toString();
-        }
-        
-        for (uint8 j = 0; j < _beneficiaries.length; j++) {
-            beneficiaryData[_beneficiaries[j]] = CID[j];
-            if(!isBeneficiary(_beneficiaries[j])) beneficiaries.push(_beneficiaries[j]);
-        }  
-             
+    function addBeneficiaries(address[] _beneficiaries, bytes32[] _messageAdds) public onlyOwner {
+        // TODO: check if input data is valid
+        for (uint8 i = 0; i < _beneficiaries.length; i++) {
+            beneficiaryData[_beneficiaries[i]] = _messageAdds[i];
+            if(!isBeneficiary(_beneficiaries[i])) beneficiaries.push(_beneficiaries[i]);
+        }                
         resetPoLTimer();
     }
 
@@ -131,15 +110,15 @@ contract Legacy is Owned{
         }
         resetPoLTimer();
     }
-    
+
     function getBeneficiaries() public view returns(address[]){
         return beneficiaries;
     }
     
-    function getBeneficiarieMessage(address _beneficiaryAddress) public view returns(string){
+    function getBeneficiarieMessage(address _beneficiaryAddress) public view returns(bytes32){
         return beneficiaryData[_beneficiaryAddress];
-    }    
-
+    }  
+    
     function kill() public onlyOwner { selfdestruct(owner); }
     
 }
