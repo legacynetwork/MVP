@@ -81,7 +81,7 @@ contract('Legacy basic test', async (accounts) => {
   it("should check beneficiary exists", async () => {
     let instance = await Legacy.deployed();
     let isBeneficiary = await instance.isBeneficiary.call(accounts[1]);
-    assert.equal(isBeneficiary, true); 
+    assert.equal(isBeneficiary, true);
   });
 
   it("should be able to delete a beneficiary", async () => {
@@ -89,6 +89,12 @@ contract('Legacy basic test', async (accounts) => {
     await instance.deleteBeneficiary(accounts[1]);
     let isBeneficiary = await instance.isBeneficiary.call(accounts[1]);
     assert.equal(isBeneficiary, false, "This beneficiary address should no be registered anymore.");
+  });
+
+  it("should return owner address", async () => {
+    let instance = await Legacy.deployed();
+    let owner = await instance.getOwner();
+    assert.equal(owner.valueOf(), accounts[0], "Contrat owner address does not correspond to accounts[0]");
   });  
   
 });
