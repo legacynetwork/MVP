@@ -8,15 +8,31 @@ const Legacy = {
   instance: null,
 
   init: function () {
-    let self = this;
+    this.contract = contract(LegacyContract)
+    this.contract.setProvider(window.web3.currentProvider)
+  },
+
+  createInstance: function (tPol, beneficiaryAddresses, beneficiaryMessages) {
+    let self = this
 
     return new Promise(function (resolve, reject) {
-      self.contract = contract(LegacyContract);
-      self.contract.setProvider(window.web3.currentProvider);
+      self.contract.new(tPol, beneficiaryAddresses, beneficiaryMessages, { from: window.web3.eth.accounts[1], gas: 3000000 }).then(instance => {
+        self.instance = instance
+        console.log("Nouvelle instance !! : " + instance.address)
+        resolve(instance)
+      }).catch(err => {
+        rejected(err)
+      })
+    })
+  },
 
-      self.contract.deployed().then(instance => {
-        self.instance = instance;
-        resolve();
+  deploy: function (tPol, beneficiaryAddresses, beneficiaryMessages) {
+    let self = this
+
+    return new Promise(function (resolve, reject) {
+      self.contract.deployed(tPol, beneficiaryAddresses, beneficiaryMessages, { from: window.web3.eth.accounts[0], gas: 3000000 }).then(instance => {
+        self.instance = instance
+        resolve(instance)
       }).catch(err => {
         reject(err);
       })
@@ -59,7 +75,6 @@ const Legacy = {
         reject(err);
       })
     })
-
   },
 
   getBeneficiary: function(index) {
@@ -76,13 +91,14 @@ const Legacy = {
 
   },
 
-  getMessageAddress: function(benefAdds) {
+  getBenefiaciesAddresses: function () {
     let self = this
 
     return new Promise((resolve, reject) => {
-      self.instance.beneficiaryData.call(benefAdds)
-      .then(tx => {
-        resolve(tx);
+      self.instance.getBeneficiaries(
+        { from: window.web3.eth.accounts[0] }
+      ).then(beneficiariesAddress => {
+        resolve(beneficiariesAddress)
       }).catch(err => {
         reject(err);
       })
@@ -90,6 +106,19 @@ const Legacy = {
 
   },
 
+  getBenefiaciesMessage: function (beneficaryAddress) {
+    let self = this
+
+    return new Promise((resolve, reject) => {
+      self.instance.getBeneficiarieMessage(beneficaryAddress,
+        { from: window.web3.eth.accounts[0] }
+      ).then(beneficiariesMessages => {
+        resolve(beneficiariesMessages)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  }
 }
 
 export default Legacy
