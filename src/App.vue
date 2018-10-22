@@ -7,7 +7,7 @@
       app
     >
       <v-list>
-        <v-list-group 
+        <v-list-group
           value="true"
           v-for="(menuCategories, i) in menuCategories"
           :key="i"
@@ -18,7 +18,7 @@
             </v-list-tile-content>
           </v-list-tile>
           <v-list>
-            <v-list-tile 
+            <v-list-tile
                   v-for="subItem in menuCategories.items"
                   :key="subItem.title"
                   :to="subItem.url"
@@ -33,8 +33,13 @@
     </v-navigation-drawer>
 
     <v-toolbar fixed app :clipped-left="clipped">
-       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title v-text="title"></v-toolbar-title>
+      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <!-- <v-toolbar-title v-text="title"></v-toolbar-title> -->
+        <!-- src="https://legacydapp.com/static/home/images/logo.png" -->
+        <img
+          width="100px"
+          src="@/assets/logo-v03-07.png"
+        >
       <v-spacer></v-spacer>
     </v-toolbar>
     <v-content>
@@ -43,7 +48,7 @@
       </div>
     </v-content>
     <v-footer :fixed="fixed" app>
-      <span>&copy; Legacy 2017</span>
+      <span>&copy; Legacy 2018</span>
     </v-footer>
   </v-app>
 </template>
@@ -57,7 +62,7 @@ export default {
         drawer: true,
         fixed: false,
         menuCategories: [
-          { 
+          {
             icon: 'bubble_chart',
             title: 'CREATE A LEGACY',
             items: [{
@@ -66,12 +71,12 @@ export default {
                   },
                   {
                     title: 'Edit a legacy',
-                    url: 'editLegacy',                    
+                    url: 'editLegacy',
                   }
                   ]
            },
-          { 
-            icon: 'bubble_chart', 
+          {
+            icon: 'bubble_chart',
             title: 'VIEW MY LEGACY' ,
             items: [{
                     title: 'Check a legacy',
@@ -79,9 +84,9 @@ export default {
                   },
                   {
                     title: 'Get my legacy',
-                    url: 'getMyLegacy',                    
+                    url: 'getMyLegacy',
                   }
-                  ]         
+                  ]
             },
         ],
         miniVariant: false,
@@ -92,4 +97,3 @@ export default {
     }
 }
 </script>
-
