@@ -118,7 +118,7 @@ contract Legacy is Owned{
     function addBeneficiaries(address[] _beneficiaries, bytes32[] _messageAdds) public onlyOwner {
         // TODO: check if input data is valid
         for (uint8 i = 0; i < _beneficiaries.length; i++) {
-            beneficiaryData[_beneficiaries[i]] = _messageAdds[i];
+            beneficiaryData[_beneficiaries[i]].messageCid = _messageCid[i];
             if(!isBeneficiary(_beneficiaries[i])) beneficiaries.push(_beneficiaries[i]);
         }
         resetPoLTimer();
@@ -155,6 +155,22 @@ contract Legacy is Owned{
     function isBeneficiary(address _beneficiary) public view returns(bool) {
         for(uint8 i = 0; i < beneficiaries.length; i++){
             if( _beneficiary == beneficiaries[i]) return true;
+        }
+        return false;
+    }
+
+    function addSecretKeepers(address[] _keepers) public onlyOwner {
+        // TODO: check if input data is valid
+        for (uint8 i = 0; i < _keepers.length; i++) {
+            //keepersData[_keepers[i]].secretShareHash = _[i]; // TODO
+            if(!isKeeper(_keepers[i])) secretKeepers.push(_keepers[i]);
+        }
+        resetPoLTimer();
+    }
+
+    function isKeeper(address _keeper) public view returns(bool) {
+        for(uint8 i = 0; i < secretKeepers.length; i++){
+            if( _keeper == secretKeepers[i]) return true;
         }
         return false;
     }
