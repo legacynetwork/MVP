@@ -9,9 +9,13 @@ const util = {
     // remove the multihash hash id
     return '0x' + bytes.slice(multiHashIdLen, bytes.length).toString('hex');
   },
-
-  // TODO
-  bytesToIpfsHash: function() {}
+  
+  bytesToIpfsHash: function(bytes32Hex) {
+    const hashHex = "1220" + bytes32Hex.slice(2)
+    const hashBytes = Buffer.from(hashHex, 'hex');
+    const hashStr = bs58.encode(hashBytes)
+    return hashStr
+  }
 
 }
 

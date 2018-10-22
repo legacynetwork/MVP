@@ -36,7 +36,7 @@ contract Legacy is Owned{
         else tPoL = DEFAULT_T_POL;        
         tZero = now + tPoL;
         addBeneficiaries(_beneficiaries, _messageAdds);
-     }
+    }
 
     function() public payable {
         if(msg.sender == owner) resetPoLTimer();
@@ -72,7 +72,7 @@ contract Legacy is Owned{
     function addBeneficiaries(address[] _beneficiaries, bytes32[] _messageAdds) public onlyOwner {
         // TODO: check if input data is valid
         for (uint8 i = 0; i < _beneficiaries.length; i++) {
-            beneficiaryData[_beneficiaries[i]]  = _messageAdds[i];
+            beneficiaryData[_beneficiaries[i]] = _messageAdds[i];
             if(!isBeneficiary(_beneficiaries[i])) beneficiaries.push(_beneficiaries[i]);
         }                
         resetPoLTimer();
@@ -110,6 +110,14 @@ contract Legacy is Owned{
         }
         resetPoLTimer();
     }
+
+    function getBeneficiaries() public view returns(address[]){
+        return beneficiaries;
+    }
+    
+    function getBeneficiarieMessage(address _beneficiaryAddress) public view returns(bytes32){
+        return beneficiaryData[_beneficiaryAddress];
+    }  
     
     function kill() public onlyOwner { selfdestruct(owner); }
     
