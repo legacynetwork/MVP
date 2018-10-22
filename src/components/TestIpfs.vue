@@ -76,7 +76,7 @@
     </v-layout>
     <v-layout row align-center>
       <v-flex d-flex sm5 offset-sm1 text-md-center v-if="retrievedMessage">
-        <p>Retrieved message content: {{retrievedMessage}}</p>
+        <p>Retrieved message content: <i>{{retrievedMessage}}</i></p>
       </v-flex>      
     </v-layout>
 
@@ -177,8 +177,12 @@
         
       },
       deleteMessage: function() {
-
-      }
+        ipfs.files.rm(this.messAddressToDelete, (err) => {
+          if (err) {
+            console.error(err)
+          }
+        })
+      },
     }
-  }
+  } 
 </script>
