@@ -14,8 +14,6 @@ const Legacy = {
 
   createInstance: function (tPol, beneficiaryAddresses, beneficiaryMessages) {
     let self = this
-    // beneficiaryAddresses = ["0x95424f81efa2f4c1687c560a2c0f6ec99e7cb91a"];
-    // beneficiaryMessages = "qm4156476541657454;qm415674989754654;";
 
     return new Promise(function (resolve, reject) {
       self.contract.new(tPol, beneficiaryAddresses, beneficiaryMessages, { from: window.web3.eth.accounts[1], gas: 3000000 }).then(instance => {
@@ -83,20 +81,7 @@ const Legacy = {
         reject(err)
       })
     })
-  },
-
-  start: function (newBetDuration, newRedistributionPercentage) {
-    let self = this
-
-    return new Promise((resolve, reject) => {
-      self.instance.start({ from: window.web3.eth.accounts[0], gas: 3000000 }
-      ).then(tx => {
-        resolve(tx)
-      }).catch(err => {
-        reject(err)
-      })
-    })
-  },
+  }
 }
 
 export default Legacy
