@@ -16,7 +16,7 @@ const Legacy = {
     let self = this
 
     return new Promise(function (resolve, reject) {
-      self.contract.new(tPol, beneficiaryAddresses, beneficiaryMessages, { from: window.web3.eth.accounts[1], gas: 3000000 }).then(instance => {
+      self.contract.new(tPol, beneficiaryAddresses, beneficiaryMessages, { from: window.web3.eth.accounts[0], gas: 3000000 }).then(instance => {
         self.instance = instance
         console.log("Nouvelle instance !! : " + instance.address)
         resolve(instance)
