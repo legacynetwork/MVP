@@ -76,7 +76,7 @@ contract('Legacy basic test', async (accounts) => {
     let newBenefAdd2  = await instance.beneficiaryData.call(accounts[2]);
     assert.equal(newBenefAdd1.valueOf(), messageAdds[0], "Unexpected message address");
     assert.equal(newBenefAdd2.valueOf(), messageAdds[1], "Unexpected message address");
-  });  
+  });
 
   it("should check beneficiary exists", async () => {
     let instance = await Legacy.deployed();
@@ -95,6 +95,19 @@ contract('Legacy basic test', async (accounts) => {
     let instance = await Legacy.deployed();
     let owner = await instance.getOwner();
     assert.equal(owner.valueOf(), accounts[0], "Contrat owner address does not correspond to accounts[0]");
-  });  
-  
+  });
+
+  it("should return beneficiaries list", async () => {
+    let instance = await Legacy.deployed();
+    let messageAdds = ["0x7d5a99f603f231d53a4f39d1521f98d2e8bb279cf29bebfd0687dc98458e7f89",
+        "0x5d5a29f603f231d53a4f39d1521f98d2e8bb279cf29bebfd0687dc98458e7f80"];
+    let beneficiaries = [accounts[1], accounts[2]];
+    await instance.addBeneficiaries(beneficiaries, messageAdds);
+    let beneciaryList = await instance.getBeneficiaries();
+    // sort and convert to string because we don't care about order
+    let beneficiariesSorted = beneficiaries.sort().toString()
+    let beneficiaryListSorted = beneficiaryList.sort().toString()
+    assert.equal(beneficiaries, beneciaryList, "Beneficiary list does not correspond to added beneficiaries");
+  });
+
 });
