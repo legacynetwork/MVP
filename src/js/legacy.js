@@ -60,10 +60,10 @@ const Legacy = {
     let self = this;
 
     return new Promise((resolve, reject) => {
-      self.instance.getOwner()
+      self.instance.getOwnerAddress()
         .then(tx => {
-          resolve(tx);
           console.log(tx);
+          resolve(tx);
         }).catch(err => {
           reject(err)
         })
@@ -134,6 +134,30 @@ const Legacy = {
       })
     })
   },
+
+  giveProofOfLife: function () {
+    let self = this
+
+    return new Promise((resolve, reject) => {
+      self.instance.giveProofOfLife(
+        { from: window.web3.eth.accounts[0] }
+      ).catch(err => {
+        reject(err);
+      })
+    })
+  },
+  setPoLTime: function (tPol) {
+    let self = this
+
+    return new Promise((resolve, reject) => {
+      self.instance.setPoLTimerLength(tPol,
+        { from: window.web3.eth.accounts[0] }
+      ).catch(err => {
+        reject(err);
+      })
+    })
+  },
+
 
   getTime: function () {
     let self = this
