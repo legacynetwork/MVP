@@ -5,13 +5,14 @@ import 'vuetify/dist/vuetify.css'
 import Web3 from 'web3'
 import router from './router'
 
-Vue.use(Vuetify, {
+Vue.use(Vuetify,  {
   theme: {
-    primary: '#1976d2',
+    primary: '#3f51b5',
     secondary: '#b0bec5',
     accent: '#8c9eff',
     error: '#b71c1c'
-  })
+  }
+})
 
 window.addEventListener('load', function () {
   if (typeof web3 !== 'undefined') {

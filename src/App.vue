@@ -47,7 +47,7 @@
       </div>
     </v-content>
     <v-footer :fixed="fixed" app>
-      <span>&copy; Legacy 2018</span>
+      <span class="ml-4">&copy; Legacy 2018</span>
     </v-footer>
   </v-app>
 </template>
