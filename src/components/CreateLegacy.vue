@@ -188,15 +188,15 @@
           v => /.+@.+/.test(v) || 'E-mail must be valid'
         ],
         newMessageRules: [
-          v => !!v || 'Message is required'
+          v => !!v || 'A message is required'
         ],
         tPolRules: [
-          v => !!v || 'tPol is required',
+          v => !!v || 'This field is required',
           v => /^[0-9]+$/.test(v) || 'A number is required'
         ],
         ethAddressRules: [
-          v => !!v || 'ETH address is required',
-          v => /^(0x){1}[0-9a-fA-F]{40}$/i.test(v) || 'ETH address must be valid'
+          v => !!v || 'An Ethereum address is required',
+          v => /^(0x){1}[0-9a-fA-F]{40}$/i.test(v) || 'Please input a valid address'
         ]
       }
     },
