@@ -4,7 +4,7 @@
       <v-layout row wrap>
         <v-flex xs12 >
           <v-form ref="form">
-            <h1 class="display-1 primary--text">Your beneficiaries</h1>
+            <h1 class="display-1 primary--text mb-3">Your beneficiaries</h1>
             <v-flex
               v-for="(row, i) in beneficiaries"
               :key="`A-${i}`"
@@ -50,10 +50,10 @@
                 </v-card>
             </v-flex>
 
-            <v-flex text-xs-center>
+            <v-flex text-xs-center text-md-right>
               <v-btn
                 @click="addBeneficiary"
-                color="teal"
+                color="#1976d2"
                 flat
                 value="recent"
                 class="teal lighten-5"
@@ -117,7 +117,7 @@
             <v-card color="warning" class="white--text">
               <v-card-title class="text-sm-left" primary-title>
                 <div>
-                  <span class="headline">Store the smart contract address below carefully</span><br>
+                  <span class="headline">Save the smart contract address below carefully</span><br>
                   <span>Ethereum contract address: {{instance.address}}</span><br>
                 </div>
               </v-card-title>
