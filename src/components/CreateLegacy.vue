@@ -86,9 +86,11 @@
                 </v-card-title>
               </v-card>
             </v-flex>
-            <v-flex text-xs-center>
-              <v-btn @click="submit" color="primary" flat class="teal lighten-5">submit</v-btn>
-              <v-btn @click="clear" normal depressed >clear</v-btn>
+            <v-flex text-xs-center class="mt-4">
+              <v-btn @click="submit" color="primary">submit</v-btn>
+              <v-btn @click="clear" color="primary" flat class="teal lighten-5">
+                clear
+              </v-btn>
             </v-flex>
           </v-form>
           <v-flex v-if="isLoading">
