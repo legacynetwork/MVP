@@ -21,23 +21,40 @@ const Legacy = {
         console.log("Nouvelle instance !! : " + instance.address)
         resolve(instance)
       }).catch(err => {
-        rejected(err)
+        console.log("Create instance error !! : " + err)
+        reject(err)
       })
     })
   },
 
-  deploy: function (tPol, beneficiaryAddresses, beneficiaryMessages) {
+  getSmartContractInstance: function (smartContractAddress) {
     let self = this
 
     return new Promise(function (resolve, reject) {
-      self.contract.deployed(tPol, beneficiaryAddresses, beneficiaryMessages, { from: window.web3.eth.accounts[0], gas: 3000000 }).then(instance => {
+      self.contract.at(smartContractAddress).then(instance => {
         self.instance = instance
+        console.log("Get instance !! : " + instance.address)
+        instance.userAddress = web3.eth.accounts[0];
         resolve(instance)
       }).catch(err => {
-        reject(err);
+        console.log("Get instance error !! : " + err)
+        reject(err)
       })
     })
   },
+
+  // deploy: function (tPol, beneficiaryAddresses, beneficiaryMessages) {
+  //   let self = this
+
+  //   return new Promise(function (resolve, reject) {
+  //     self.contract.deployed(tPol, beneficiaryAddresses, beneficiaryMessages, { from: window.web3.eth.accounts[0], gas: 3000000 }).then(instance => {
+  //       self.instance = instance
+  //       resolve(instance)
+  //     }).catch(err => {
+  //       reject(err);
+  //     })
+  //   })
+  // },
 
   getOwnerAddress: function () {
     let self = this;
@@ -50,7 +67,7 @@ const Legacy = {
         }).catch(err => {
           reject(err)
         })
-      })
+    })
   },
 
   getPoLTimerLen: function () {
@@ -66,27 +83,40 @@ const Legacy = {
     })
   },
 
-  addBeneficiaries: function(benefAdds, messAdds) {
-    let self = this
+  getProofOfLife: function () {
+    let self = this;
 
     return new Promise((resolve, reject) => {
-      self.instance.addBeneficiaries(benefAdds, messAdds, { from: window.web3.eth.accounts[0], gas: 3000000 })
-      .catch(err => {
+      self.instance.getProofOfLife(
+      ).then(isDead => {
+        resolve(isDead);
+      }).catch(err => {
         reject(err);
       })
     })
   },
 
-  getBeneficiary: function(index) {
+  addBeneficiaries: function (benefAdds, messAdds) {
+    let self = this
+
+    return new Promise((resolve, reject) => {
+      self.instance.addBeneficiaries(benefAdds, messAdds, { from: window.web3.eth.accounts[0], gas: 3000000 })
+        .catch(err => {
+          reject(err);
+        })
+    })
+  },
+
+  getBeneficiary: function (index) {
     let self = this
 
     return new Promise((resolve, reject) => {
       self.instance.beneficiaries.call(index)
-      .then(tx => {
-        resolve(tx);
-      }).catch(err => {
-        reject(err);
-      })
+        .then(tx => {
+          resolve(tx);
+        }).catch(err => {
+          reject(err);
+        })
     })
 
   },
@@ -103,7 +133,48 @@ const Legacy = {
         reject(err);
       })
     })
+  },
 
+  getTime: function () {
+    let self = this
+
+    return new Promise((resolve, reject) => {
+      self.instance.getNow(
+        { from: window.web3.eth.accounts[0] }
+      ).then(beneficiariesAddress => {
+        resolve(beneficiariesAddress)
+      }).catch(err => {
+        reject(err);
+      })
+    })
+  },
+
+  isBeneficiary: function (userAddress) {
+    let self = this
+
+    return new Promise((resolve, reject) => {
+      self.instance.isBeneficiary(userAddress,
+        { from: window.web3.eth.accounts[0] }
+      ).then(isBeneficiary => {
+        resolve(isBeneficiary)
+      }).catch(err => {
+        reject(err);
+      })
+    })
+  },
+
+  getTZero: function () {
+    let self = this
+
+    return new Promise((resolve, reject) => {
+      self.instance.tZero.call(
+        { from: window.web3.eth.accounts[0] }
+      ).then(tZero => {
+        resolve(tZero)
+      }).catch(err => {
+        reject(err);
+      })
+    })
   },
 
   getBenefiaciesMessage: function (beneficaryAddress) {

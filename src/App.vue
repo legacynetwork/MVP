@@ -65,7 +65,7 @@ export default {
                     url: 'createLegacy',
                   },
                   {
-                    title: 'Edit a legacy',
+                    title: 'Manage my legacy',
                     url: 'editLegacy',                    
                   }
                   ]
@@ -74,11 +74,7 @@ export default {
             icon: 'bubble_chart', 
             title: 'VIEW MY LEGACY' ,
             items: [{
-                    title: 'Check a legacy',
-                    url: 'checkLegacy',
-                  },
-                  {
-                    title: 'Get my legacy',
+                    title: 'My legacy',
                     url: 'getMyLegacy',                    
                   }
                   ]         
