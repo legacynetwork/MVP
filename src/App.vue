@@ -37,7 +37,7 @@
       <!-- <v-toolbar-title v-text="title"></v-toolbar-title> -->
         <img
           width="100px"
-          src="@/assets/logo-v03-07.png"
+          src="@/assets/logo-v03-07_modcolor.png"
         >
       <v-spacer></v-spacer>
     </v-toolbar>
