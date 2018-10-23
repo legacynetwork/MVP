@@ -1,11 +1,10 @@
 {
   "name": "Legacy",
-  "description": "Legacy project",
+  "description": "Legacy",
   "version": "0.0.1",
-  "author": "Guillaume <guillaume@girosense.com>",
+  "author": "legacy <contact@legacydapp.com>",
   "private": true,
   "scripts": {
-    "start": "npm run dev",
     "dev": "cross-env NODE_ENV=development webpack-dev-server --open --inline --hot",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
