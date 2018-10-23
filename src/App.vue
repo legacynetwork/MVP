@@ -35,7 +35,6 @@
     <v-toolbar fixed app :clipped-left="clipped">
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <!-- <v-toolbar-title v-text="title"></v-toolbar-title> -->
-        <!-- src="https://legacydapp.com/static/home/images/logo.png" -->
         <img
           width="100px"
           src="@/assets/logo-v03-07.png"
@@ -77,7 +76,7 @@ export default {
            },
           {
             icon: 'bubble_chart',
-            title: 'VIEW MY LEGACY' ,
+            title: 'CLAIM MY LEGACY',
             items: [{
                     title: 'Check a legacy',
                     url: 'checkLegacy',

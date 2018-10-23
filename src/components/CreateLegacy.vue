@@ -51,19 +51,9 @@
             </v-flex>
 
             <v-flex text-xs-center text-md-right>
-              <!-- <v-btn
-                @click="addBeneficiary"
-                color="#1976d2"
-                flat
-                value="recent"
-                class="teal lighten-5"
-              >
-                <v-icon>add</v-icon>
-                <span>Add beneficiary</span>
-              </v-btn> -->
               <v-btn
                 @click="addBeneficiary"
-                color="#1976d2"
+                color="primary"
                 flat
                 value="recent"
                 class="teal lighten-5"
@@ -97,7 +87,7 @@
               </v-card>
             </v-flex>
             <v-flex text-xs-center>
-              <v-btn @click="submit" color="#1976d2" flat class="teal lighten-5">submit</v-btn>
+              <v-btn @click="submit" color="primary" flat class="teal lighten-5">submit</v-btn>
               <v-btn @click="clear" normal depressed >clear</v-btn>
             </v-flex>
           </v-form>
