@@ -26,7 +26,7 @@
                           <v-textarea v-model="row.beneficiaryMessage"
                                       :error-messages="newMessageErrors"
                                       :rules="newMessageRules"
-                                      label="Write a message to your bneficiary..."
+                                      label="Write a message to your beneficiary..."
                                       auto-grow
                                       rows="1"
                                       required
@@ -42,7 +42,7 @@
                         color="red"
                         flat
                         value="recent"
-                        class="red lighten-5"
+                        class="red lighten-5 my-1"
                       >
                         <v-icon>clear</v-icon>
                       </v-btn>
@@ -51,7 +51,7 @@
             </v-flex>
 
             <v-flex text-xs-center text-md-right>
-              <v-btn
+              <!-- <v-btn
                 @click="addBeneficiary"
                 color="#1976d2"
                 flat
@@ -60,6 +60,16 @@
               >
                 <v-icon>add</v-icon>
                 <span>Add beneficiary</span>
+              </v-btn> -->
+              <v-btn
+                @click="addBeneficiary"
+                color="#1976d2"
+                flat
+                value="recent"
+                class="teal lighten-5"
+                fab
+              >
+                <v-icon>add</v-icon>
               </v-btn>
             </v-flex>
 
@@ -87,8 +97,8 @@
               </v-card>
             </v-flex>
             <v-flex text-xs-center>
-              <v-btn @click="submit" color="success">submit</v-btn>
-              <v-btn @click="clear" color="warning">clear</v-btn>
+              <v-btn @click="submit" color="#1976d2" flat class="teal lighten-5">submit</v-btn>
+              <v-btn @click="clear" normal depressed >clear</v-btn>
             </v-flex>
           </v-form>
           <v-flex v-if="isLoading">
