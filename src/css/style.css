@@ -22,6 +22,10 @@ h2, h3 {
 .textGrey div{
     color: #333;
 }
+
+p{
+    font-size:large;
+}
 /* .v-card__title, .v-card__text{
     padding-left: 0px;
 } */

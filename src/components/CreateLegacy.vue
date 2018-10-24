@@ -1,5 +1,5 @@
 <template>
-  <div class="editLegacy">
+  <div class="createLegacy">
     <v-container grid-list-md>
       <v-layout row wrap>
         <v-flex xs12 sm10 offset-sm1 >
@@ -64,7 +64,7 @@
                     color="grey"
                     flat
                     value="recent"
-                    class="accent"
+                    class="warning"
                     fab
                   >
                     <v-icon>add</v-icon>
@@ -82,10 +82,13 @@
                       <span class="headline">Proof of Life Timer</span><br>
                       <v-card-text class="pb-0 pt-0">
                         <v-layout align-center row wrap>
-                          <v-flex d-flex xs12 sm9>
-                            In order for the contract to know that you are still
+                          <v-flex d-flex xs12 sm1>
+                            <v-icon size="50">timelapse</v-icon>
+                          </v-flex>
+                          <v-flex d-flex xs12 sm8>
+                           <p> In order for the contract to know that you are still
                             alive, you'll need to provide us proof of life regularly by reseting a timer.
-                            Tell us how long (in  days) you want this timer to be (eg. 120).
+                            Tell us how long (in  days) you want this timer to be (eg. 120).</p>
                           </v-flex>
                           <v-flex d-flex xs12 sm3>
                             <v-text-field v-model="tPol"
@@ -107,7 +110,7 @@
             </v-card-title>
           </div>
                 <v-flex text-xs-center class="mt-4">
-                  <v-btn @click="submit" color="accent" class="textGrey" light> submit</v-btn>
+                  <v-btn @click="submit" color="warning" class="textGrey" light> submit</v-btn>
                   <v-btn @click="clear" color="grey" class="accent">clear</v-btn>
                 </v-flex>
               </v-form>
@@ -123,44 +126,57 @@
         </v-flex>
       </v-layout>
 
-      <v-layout row >
-        <v-flex sm12 xs12 v-if="feedbackMsg">
-          <v-flex xs12>
-            <v-card color="success" class="white--text">
-              <v-card-title class="text-sm-left" primary-title>
-                <div>
-                  <span class="headline">{{feedbackMsg}}</span><br>
-                </div>
-              </v-card-title>
-            </v-card>
-          </v-flex>
-          <v-flex xs12>
-            <v-card color="warning" class="white--text">
-              <v-card-title class="text-sm-left" primary-title>
-                <div>
-                  <span class="headline">Save the smart contract address below carefully</span><br>
-                  <span>Ethereum contract address: {{instance.address}}</span><br>
-                </div>
-              </v-card-title>
-            </v-card>
-          </v-flex>
-          <v-flex
-            v-for="(row, i) in beneficiaries"
-            :key=i
-            >
-            <v-layout row wrap>
-              <v-flex xs12>
-                <v-card >
-                  <v-card-title class="text-sm-left" primary-title>
-                    <div>
-                      <span class="headline">Beneficiary n°{{i+1}}</span><br>
-                      <span>Ethereum address: {{row.ethAddress}}</span><br>
-                      <span>Files link: <a v-bind:href="generateInfuraUrl(i)">my file</a></span>
-                    </div>
-                  </v-card-title>
-                </v-card>
-              </v-flex>
-            </v-layout>
+      <v-layout row id="result" >
+        <v-flex xs12 sm10 offset-sm1 >
+          <v-flex sm12 xs12 v-if="feedbackMsg">
+            <v-flex xs12>
+              <v-alert
+                :value="true"
+                type="success"
+                dismissible="true"
+                transition="scale-transition"
+                >
+                <p>{{feedbackMsg}}</p>
+              </v-alert>
+            </v-flex>
+            <v-flex xs12>
+              <v-card color="error" class="white--text">
+                <v-card-title class="text-sm-left" primary-title>
+                  <v-flex d-flex xs12 md1>
+                    <v-icon size="50">warning</v-icon>
+                  </v-flex>
+                  <v-flex d-flex xs12 md4>
+                    <p class="headline">Save the following information carefully:</p>
+                  </v-flex>
+                  <v-flex d-flex xs12 md7>
+                   <p>Ethereum contract address: {{instance.address}}</p>
+                  </v-flex>
+                </v-card-title>
+              </v-card>
+            </v-flex>
+            <v-flex
+              v-for="(beneficiary, i) in beneficiaries"
+              :key=i
+              >
+              <v-layout row wrap>
+                <v-flex xs12>
+                  <v-card color="#1262B2">
+                    <v-card-title class="text-sm-left" primary-title>
+                      <v-flex d-flex xs12 md1>
+                        <v-icon size="50">account_box</v-icon>
+                      </v-flex>
+                      <v-flex d-flex xs12 md4>
+                        <p>Beneficiary {{i+1}}:</p>
+                      </v-flex>
+                      <v-flex d-flex xs12 md7>
+                        <p>{{beneficiary.ethAddress}}
+                        <v-icon size="30">attach_file</v-icon><a v-bind:href="generateInfuraUrl(i)">File link</a></p>
+                      </v-flex>
+                    </v-card-title>
+                  </v-card>
+                </v-flex>
+              </v-layout>
+            </v-flex>
           </v-flex>
         </v-flex>
       </v-layout>
@@ -237,7 +253,7 @@
                 this.isLoading = false;
                 this.instance = instance;
                 this.feedbackMsg = "Your messages have been successfully stored."
-
+                // TODO: scroll to result
               }).catch(err => {
                 console.log(err)
               })
