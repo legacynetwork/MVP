@@ -5,7 +5,7 @@
         <v-flex xs12 >
           <v-form ref="form">
             <h1 class="display-1 primary--text">Your beneficiaries</h1>
-            <v-flex  
+            <v-flex
               v-for="(row, i) in beneficiaries"
               :key="`A-${i}`"
               >
@@ -14,30 +14,37 @@
                   <span class="headline">Beneficiary n°{{i+1}}</span><br>
                   <v-card-text class="pb-0 pt-0">
                     <v-layout align-center row wrap>
-                        <v-flex d-flex xs12 sm5>
-                          <v-text-field v-model="row.ethAddress"
-                                        label="Beneficiary address"
-                                        :error-messages="ethAddressErrors"
-                                        :counter="42"
-                                        :rules="ethAddressRules"                                
-                          ></v-text-field>
-                        </v-flex>
-                        <v-flex d-flex xs12 sm7>
-                          <v-textarea v-model="row.beneficiaryMessage"
-                                      :error-messages="newMessageErrors"
-                                      :rules="newMessageRules"
-                                      label="Beneficiary message"
-                                      auto-grow
-                                      rows="1"
-                                      required 
-                          ></v-textarea>
-                        </v-flex> 
-                      </v-layout>
+                      <v-flex d-flex xs12 sm5>
+                        <v-text-field v-model="row.ethAddress"
+                                      label="Beneficiary address"
+                                      :error-messages="ethAddressErrors"
+                                      :counter="42"
+                                      :rules="ethAddressRules"
+                        ></v-text-field>
+                      </v-flex>
+                      <v-flex d-flex xs12 sm7>
+                        <v-textarea v-model="row.beneficiaryMessage"
+                                    :error-messages="newMessageErrors"
+                                    :rules="newMessageRules"
+                                    label="Beneficiary message"
+                                    auto-grow
+                                    rows="1"
+                                    required
+                        ></v-textarea>
+                      </v-flex>
+                    </v-layout>
+                    <v-layout align-center row wrap>
+                      <v-flex d-flex xs12 sm5>
+                        <v-text-field v-model="row.personalKey"
+                                      label="Personal key"
+                        ></v-text-field>
+                      </v-flex>
+                    </v-layout>
                   </v-card-text>
 
                   </v-card-title>
                   <v-card-actions class="pt-0">
-                      <v-btn 
+                      <v-btn
                         @click="removeEthAddress(`A-${i}`);"
                         color="red"
                         flat
@@ -71,14 +78,14 @@
                     <v-layout align-center row wrap>
                       <v-flex d-flex xs12 sm9>
                         Provide proof of life time. This time is used to set the longest period of inactivity before you declare yourself dead
-                      </v-flex>  
+                      </v-flex>
                       <v-flex d-flex xs12 sm3>
                         <v-text-field v-model="tPol"
                                       label="Time in days"
                                       :error-messages="tPolErrors"
-                                      :rules="tPolRules"  
+                                      :rules="tPolRules"
                         ></v-text-field>
-                      </v-flex>  
+                      </v-flex>
                     </v-layout>
                   </v-card-text>
                 </v-card-title>
@@ -110,7 +117,7 @@
                 </div>
               </v-card-title>
             </v-card>
-          </v-flex>        
+          </v-flex>
           <v-flex xs12>
             <v-card color="warning" class="white--text">
               <v-card-title class="text-sm-left" primary-title>
@@ -120,8 +127,8 @@
                 </div>
               </v-card-title>
             </v-card>
-          </v-flex>                
-          <v-flex  
+          </v-flex>
+          <v-flex
             v-for="(row, i) in beneficiaries"
             :key=i
             >
@@ -133,6 +140,7 @@
                       <span class="headline">Beneficiary n°{{i+1}}</span><br>
                       <span>Ethereum address: {{row.ethAddress}}</span><br>
                       <span>Files link: <a v-bind:href="generateInfuraUrl(i)">my file</a></span>
+                      <span>Personal decryption key: {{row.personalKey}}</span>
                     </div>
                   </v-card-title>
                 </v-card>
@@ -140,7 +148,7 @@
             </v-layout>
           </v-flex>
         </v-flex>
-      </v-layout>         
+      </v-layout>
     </v-container>
   </div>
 </template>
@@ -171,7 +179,8 @@
           file: {
               name: '',
               path: '',
-          }
+          },
+          personalKey: ""
         }],
         feedbackMsg: '',
         ipfsHashs: [],
@@ -185,15 +194,15 @@
         ],
         newMessageRules: [
           v => !!v || 'Message is required'
-        ],   
+        ],
         tPolRules: [
           v => !!v || 'tPol is required',
           v => /^[0-9]+$/.test(v) || 'A number is required'
-        ],                    
+        ],
         ethAddressRules: [
           v => !!v || 'ETH address is required',
           v => /^(0x){1}[0-9a-fA-F]{40}$/i.test(v) || 'ETH address must be valid'
-        ]   
+        ]
       }
     },
     created: function () {
@@ -230,9 +239,10 @@
             file: {
                 name: '',
                 path: '',
-            }
-          }]        
-      },     
+            },
+            personalKey: ""
+          }]
+      },
       deploy: function () {
         console.log("Deploy!")
         Legacy.deploy(10, [0x95424f81efa2f4c1687c560a2c0f6ec99e7cb91a], ['Salut']).then(instance => {
@@ -240,20 +250,20 @@
           }).catch(err => {
             console.log(err)
           })
-      },    
+      },
       getOwnerAddress: function () {
         Legacy.getOwnerAddress().then(ownerAddress => {
           this.ownerAddress = ownerAddress
           console.log("Address is: " + ownerAddress)
         })
-      },            
+      },
       getBenefiaciesAddresses: function () {
         console.log("Get Owner address!")
         Legacy.getBenefiaciesAddresses().then(beneficiariesAddresses => {
           this.beneficiariesAddresses = beneficiariesAddresses
           console.log("Address is: " + beneficiariesAddresses)
         })
-      },  
+      },
       getBenefiaciesCID: function () {
         console.log("Get Owner address!")
         Legacy.getBenefiaciesMessage(this.addressRequested).then(beneficiariesMessages => {
@@ -261,16 +271,26 @@
           this.beneficiariesMessages = ipfsHash
           console.log("Address is: " + ipfsHash)
         })
-      },         
+      },
       getMessagesToUploadFromBeneficiaries: function(beneficiaries){
-        var beneficiariesMessages = [];
+        let beneficiariesMessages = [];
+        let msgToUpload = "";
+        let key = "";
+        let CryptoJS = require("crypto-js");
         for(var i=0; i < beneficiaries.length; i++ ){
+          msgToUpload =  beneficiaries[i].beneficiaryMessage;
+          // if(beneficiaries[i].personalKey) {
+          //   key = beneficiaries[i].personalKey;
+          //   msgToUpload =  CryptoJS.AES.encrypt(msgToUpload, key).toString();
+          //   console.log("msg to upload:" +  msgToUpload);
+          // }
           beneficiariesMessages.push({
-            content: Buffer.from(beneficiaries[i].beneficiaryMessage)
-          }) 
+            content: Buffer.from(msgToUpload)
+          })
         }
+        console.log(beneficiariesMessages);
         return beneficiariesMessages;
-      },      
+      },
       formatBenefiariesAddresses: function(beneficiaries) {
         var beneficiariesAddress = [];
         for(var i=0; i < beneficiaries.length; i++ ){
@@ -286,7 +306,7 @@
           ipfsHashsList.push(util.ipfsHashToBytes(ipfsHashs[i].path))
         }
         return ipfsHashsList;
-      },      
+      },
       addBeneficiary: function() {
         this.feedbackMsg = '';
         this.beneficiaries.push({
@@ -295,7 +315,8 @@
           file: {
               name: '',
               path: '',
-          }
+          },
+          personalKey: ""
         });
       },
       addRow: function() {
@@ -306,22 +327,22 @@
               name: 'Choose File'
           }
         });
-      },      
+      },
       removeFileRow: function(index) {
         this.uploadedFiles.splice(index, 1);
       },
       removeEthAddress: function(index) {
         this.beneficiaries.splice(index, 1);
         this.feedbackMsg = '';
-      },      
+      },
       setFilename: function(event, row) {
         var file = event.target.files[0];
         row.file = file
       },
       generateInfuraUrl: function (CID) {
         return "https://ipfs.infura.io/ipfs/"+this.ipfsHashs[CID].path;
-      }      
-    }   
+      }
+    }
   }
 </script>
 
