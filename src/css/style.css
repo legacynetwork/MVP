@@ -1,0 +1,31 @@
+.backgroundPageColor{
+    background-color: #007fff;
+}
+
+.backgroundPrimaryCardColor{
+    background-color: #007fff !important;
+}
+
+.backgroundSecondaryCardColor{
+    background-color: #007fff !important;
+    border:solid 1px  rgb(255,255,255,0.7);
+}
+
+#app, .display-1, .display-2{
+    font-family: 'Source Sans Pro', sans-serif !important;
+}
+
+h2, h3 {
+    color:white !important;
+}
+
+.textGrey div{
+    color: #333;
+}
+
+p{
+    font-size:large;
+}
+/* .v-card__title, .v-card__text{
+    padding-left: 0px;
+} */

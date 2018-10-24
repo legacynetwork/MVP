@@ -2,10 +2,19 @@ import Vue from 'vue'
 import App from './App.vue'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.css'
+import './css/style.css'
 import Web3 from 'web3'
 import router from './router'
 
-Vue.use(Vuetify)
+Vue.use(Vuetify, {
+  theme: {
+    primary: 'white',
+    secondary: '#76B4FA',
+    accent: '#FFF10D',
+    error: '#BF1E13',
+    grey: '#333'
+  }
+})
 
 window.addEventListener('load', function () {
   if (typeof web3 !== 'undefined') {

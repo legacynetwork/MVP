@@ -1,94 +1,120 @@
 <template>
-  <div class="editLegacy">
+  <div class="createLegacy">
     <v-container grid-list-md>
       <v-layout row wrap>
-        <v-flex xs12 >
+        <v-flex xs12 sm10 offset-sm1 >
+          <h2 class="display-2  mb-3">Create a Legacy</h2>
+          <v-divider></v-divider>
           <v-form ref="form">
-            <h1 class="display-1 primary--text">Your beneficiaries</h1>
-            <v-flex  
-              v-for="(row, i) in beneficiaries"
-              :key="`A-${i}`"
-              >
-              <v-card>
-                <v-card-title class="text-sm-left pb-0" primary-title>
-                  <span class="headline">Beneficiary n°{{i+1}}</span><br>
-                  <v-card-text class="pb-0 pt-0">
-                    <v-layout align-center row wrap>
-                        <v-flex d-flex xs12 sm5>
-                          <v-text-field v-model="row.ethAddress"
-                                        label="Beneficiary address"
-                                        :error-messages="ethAddressErrors"
-                                        :counter="42"
-                                        :rules="ethAddressRules"                                
-                          ></v-text-field>
-                        </v-flex>
-                        <v-flex d-flex xs12 sm7>
-                          <v-textarea v-model="row.beneficiaryMessage"
-                                      :error-messages="newMessageErrors"
-                                      :rules="newMessageRules"
-                                      label="Beneficiary message"
-                                      auto-grow
-                                      rows="1"
-                                      required 
-                          ></v-textarea>
-                        </v-flex> 
-                      </v-layout>
-                  </v-card-text>
+            <div class="backgroundPrimaryCardColor">
+              <v-card-title class="text-sm-left pb-0" primary-title>
+                <h3 class="display-1 pl-4 mb-3">Your beneficiaries</h3>
+                <v-card-text class="pb-0 pt-0">
+                  <v-flex
+                    v-for="(row, i) in beneficiaries"
+                    :key="`A-${i}`"
+                    >
+                    <v-card class="backgroundSecondaryCardColor">
+                      <v-card-title class="text-sm-left pb-0" primary-title>
+                        <v-card-text class="pt-0">
+                          <v-layout align-center row wrap>
+                            <v-flex xs12 sm1>
+                              <v-icon size="50">account_box</v-icon>
+                            </v-flex>
+                            <v-flex d-flex xs12 sm4>
+                              <v-text-field v-model="row.ethAddress"
+                                              label="Beneficiary address"
+                                              :error-messages="ethAddressErrors"
+                                              :counter="42"
+                                              dark
+                                              :rules="ethAddressRules"
+                                ></v-text-field>
+                              </v-flex>
+                              <v-flex d-flex xs12 sm6>
+                                <v-textarea v-model="row.beneficiaryMessage"
+                                            :error-messages="newMessageErrors"
+                                            :rules="newMessageRules"
+                                            label="Write a message to your beneficiary..."
+                                            auto-grow
+                                            rows="1"
+                                            dark
+                                            required
+                                ></v-textarea>
+                              </v-flex>
+                              <v-flex d-flex xs12 sm1>
+                                <v-btn
+                                    @click="removeEthAddress(`A-${i}`);"
+                                    color="error"
+                                    flat
+                                  >
+                                  <v-icon>clear</v-icon>
+                                </v-btn>
 
-                  </v-card-title>
-                  <v-card-actions class="pt-0">
-                      <v-btn 
-                        @click="removeEthAddress(`A-${i}`);"
-                        color="red"
-                        flat
-                        value="recent"
-                        class="red lighten-5"
-                      >
-                        <v-icon>clear</v-icon>
-                      </v-btn>
-                  </v-card-actions>
-                </v-card>
-            </v-flex>
+                              </v-flex>                              
+                            </v-layout>
+                          </v-card-text>
+                        </v-card-title>
+                      </v-card>
+                  </v-flex>
+                </v-card-text>
 
-            <v-flex text-xs-center>
-              <v-btn
-                @click="addBeneficiary"
-                color="teal"
-                flat
-                value="recent"
-                class="teal lighten-5"
-              >
-                <v-icon>add</v-icon>
-                <span>Add beneficiary</span>
-              </v-btn>
-            </v-flex>
+                <v-flex text-xs-center text-md-right>
+                  <v-btn
+                    @click="addBeneficiary"
+                    color="grey"
+                    flat
+                    value="recent"
+                    class="warning"
+                    fab
+                  >
+                    <v-icon>add</v-icon>
+                  </v-btn>
+                </v-flex>
+            </v-card-title>
+          </div>
+          <div class="backgroundPrimaryCardColor mt-5">
+            <v-card-title class="text-sm-left" primary-title >
+              <h3 class="display-1 pl-4 mb-3">Contract settings</h3>
+              <v-card-text class="pb-0 pt-0">
+                <v-flex d-flex xs12>
+                  <v-card class="backgroundSecondaryCardColor">
+                    <v-card-title class="text-sm-left" primary-title>
+                      <span class="headline">Proof of Life Timer</span><br>
+                      <v-card-text class="pb-0 pt-0">
+                        <v-layout align-center row wrap>
+                          <v-flex d-flex xs12 sm1>
+                            <v-icon size="50">timelapse</v-icon>
+                          </v-flex>
+                          <v-flex d-flex xs12 sm8>
+                           <p> In order for the contract to know that you are still
+                            alive, you'll need to provide us proof of life regularly by reseting a timer.
+                            Tell us how long (in  days) you want this timer to be (eg. 120).</p>
+                          </v-flex>
+                          <v-flex d-flex xs12 sm3>
+                            <v-text-field v-model="tPol"
+                                          outline
+                                          height="100"
+                                          label="Time in days"
+                                          :error-messages="tPolErrors"
+                                          :rules="tPolRules"
+                                          dark
+                                          class="inputNumber"
+                            ></v-text-field>
+                          </v-flex>
+                        </v-layout>
+                      </v-card-text>
+                    </v-card-title>
+                  </v-card>
+                </v-flex>
+              </v-card-text>
+            </v-card-title>
+          </div>
+                <v-flex text-xs-center class="mt-4">
+                  <v-btn @click="submit" color="warning" class="textGrey" light> submit</v-btn>
+                  <v-btn @click="clear" color="grey" class="accent">clear</v-btn>
+                </v-flex>
+              </v-form>
 
-            <v-flex d-flex xs12>
-              <v-card >
-                <v-card-title class="text-sm-left" primary-title>
-                  <span class="headline">Proof of life time</span><br>
-                  <v-card-text class="pb-0 pt-0">
-                    <v-layout align-center row wrap>
-                      <v-flex d-flex xs12 sm9>
-                        Provide proof of life time. This time is used to set the longest period of inactivity before you declare yourself dead
-                      </v-flex>  
-                      <v-flex d-flex xs12 sm3>
-                        <v-text-field v-model="tPol"
-                                      label="Time in days"
-                                      :error-messages="tPolErrors"
-                                      :rules="tPolRules"  
-                        ></v-text-field>
-                      </v-flex>  
-                    </v-layout>
-                  </v-card-text>
-                </v-card-title>
-              </v-card>
-            </v-flex>
-            <v-flex text-xs-center>
-              <v-btn @click="submit" color="success">submit</v-btn>
-              <v-btn @click="clear" color="warning">clear</v-btn>
-            </v-flex>
-          </v-form>
           <v-flex v-if="isLoading">
             <div class="text-xs-center">
               <v-progress-circular
@@ -100,47 +126,60 @@
         </v-flex>
       </v-layout>
 
-      <v-layout row >
-        <v-flex sm12 xs12 v-if="feedbackMsg">
-          <v-flex xs12>
-            <v-card color="success" class="white--text">
-              <v-card-title class="text-sm-left" primary-title>
-                <div>
-                  <span class="headline">{{feedbackMsg}}</span><br>
-                </div>
-              </v-card-title>
-            </v-card>
-          </v-flex>        
-          <v-flex xs12>
-            <v-card color="warning" class="white--text">
-              <v-card-title class="text-sm-left" primary-title>
-                <div>
-                  <span class="headline">Store the smart contract address below carefully</span><br>
-                  <span>Ethereum contract address: {{instance.address}}</span><br>
-                </div>
-              </v-card-title>
-            </v-card>
-          </v-flex>                
-          <v-flex  
-            v-for="(row, i) in beneficiaries"
-            :key=i
-            >
-            <v-layout row wrap>
-              <v-flex xs12>
-                <v-card >
-                  <v-card-title class="text-sm-left" primary-title>
-                    <div>
-                      <span class="headline">Beneficiary n°{{i+1}}</span><br>
-                      <span>Ethereum address: {{row.ethAddress}}</span><br>
-                      <span>Files link: <a v-bind:href="generateInfuraUrl(i)">my file</a></span>
-                    </div>
-                  </v-card-title>
-                </v-card>
-              </v-flex>
-            </v-layout>
+      <v-layout row id="result" >
+        <v-flex xs12 sm10 offset-sm1 >
+          <v-flex sm12 xs12 v-if="feedbackMsg">
+            <v-flex xs12>
+              <v-alert
+                :value="true"
+                type="success"
+                dismissible="true"
+                transition="scale-transition"
+                >
+                <p>{{feedbackMsg}}</p>
+              </v-alert>
+            </v-flex>
+            <v-flex xs12>
+              <v-card color="error" class="white--text">
+                <v-card-title class="text-sm-left" primary-title>
+                  <v-flex d-flex xs12 md1>
+                    <v-icon size="50">warning</v-icon>
+                  </v-flex>
+                  <v-flex d-flex xs12 md4>
+                    <p class="headline">Save the following information carefully:</p>
+                  </v-flex>
+                  <v-flex d-flex xs12 md7>
+                   <p>Ethereum contract address: {{instance.address}}</p>
+                  </v-flex>
+                </v-card-title>
+              </v-card>
+            </v-flex>
+            <v-flex
+              v-for="(beneficiary, i) in beneficiaries"
+              :key=i
+              >
+              <v-layout row wrap>
+                <v-flex xs12>
+                  <v-card color="#1262B2">
+                    <v-card-title class="text-sm-left" primary-title>
+                      <v-flex d-flex xs12 md1>
+                        <v-icon size="50">account_box</v-icon>
+                      </v-flex>
+                      <v-flex d-flex xs12 md4>
+                        <p>Beneficiary {{i+1}}:</p>
+                      </v-flex>
+                      <v-flex d-flex xs12 md7>
+                        <p>{{beneficiary.ethAddress}}
+                        <v-icon size="30">attach_file</v-icon><a v-bind:href="generateInfuraUrl(i)">File link</a></p>
+                      </v-flex>
+                    </v-card-title>
+                  </v-card>
+                </v-flex>
+              </v-layout>
+            </v-flex>
           </v-flex>
         </v-flex>
-      </v-layout>         
+      </v-layout>
     </v-container>
   </div>
 </template>
@@ -184,16 +223,16 @@
           v => /.+@.+/.test(v) || 'E-mail must be valid'
         ],
         newMessageRules: [
-          v => !!v || 'Message is required'
-        ],   
+          v => !!v || 'A message is required'
+        ],
         tPolRules: [
-          v => !!v || 'tPol is required',
+          v => !!v || 'This field is required',
           v => /^[0-9]+$/.test(v) || 'A number is required'
-        ],                    
+        ],
         ethAddressRules: [
-          v => !!v || 'ETH address is required',
-          v => /^(0x){1}[0-9a-fA-F]{40}$/i.test(v) || 'ETH address must be valid'
-        ]   
+          v => !!v || 'An Ethereum address is required',
+          v => /^(0x){1}[0-9a-fA-F]{40}$/i.test(v) || 'Please input a valid address'
+        ]
       }
     },
     created: function () {
@@ -213,8 +252,8 @@
                 console.log(instance)
                 this.isLoading = false;
                 this.instance = instance;
-                this.feedbackMsg = "Your messages has been successfully stored."
-
+                this.feedbackMsg = "Your messages have been successfully stored."
+                // TODO: scroll to result
               }).catch(err => {
                 console.log(err)
               })
@@ -231,8 +270,8 @@
                 name: '',
                 path: '',
             }
-          }]        
-      },     
+          }]
+      },
       deploy: function () {
         console.log("Deploy!")
         Legacy.deploy(10, [0x95424f81efa2f4c1687c560a2c0f6ec99e7cb91a], ['Salut']).then(instance => {
@@ -240,20 +279,20 @@
           }).catch(err => {
             console.log(err)
           })
-      },    
+      },
       getOwnerAddress: function () {
         Legacy.getOwnerAddress().then(ownerAddress => {
           this.ownerAddress = ownerAddress
           console.log("Address is: " + ownerAddress)
         })
-      },            
+      },
       getBenefiaciesAddresses: function () {
         console.log("Get Owner address!")
         Legacy.getBenefiaciesAddresses().then(beneficiariesAddresses => {
           this.beneficiariesAddresses = beneficiariesAddresses
           console.log("Address is: " + beneficiariesAddresses)
         })
-      },  
+      },
       getBenefiaciesCID: function () {
         console.log("Get Owner address!")
         Legacy.getBenefiaciesMessage(this.addressRequested).then(beneficiariesMessages => {
@@ -261,16 +300,16 @@
           this.beneficiariesMessages = ipfsHash
           console.log("Address is: " + ipfsHash)
         })
-      },         
+      },
       getMessagesToUploadFromBeneficiaries: function(beneficiaries){
         var beneficiariesMessages = [];
         for(var i=0; i < beneficiaries.length; i++ ){
           beneficiariesMessages.push({
             content: Buffer.from(beneficiaries[i].beneficiaryMessage)
-          }) 
+          })
         }
         return beneficiariesMessages;
-      },      
+      },
       formatBenefiariesAddresses: function(beneficiaries) {
         var beneficiariesAddress = [];
         for(var i=0; i < beneficiaries.length; i++ ){
@@ -286,7 +325,7 @@
           ipfsHashsList.push(util.ipfsHashToBytes(ipfsHashs[i].path))
         }
         return ipfsHashsList;
-      },      
+      },
       addBeneficiary: function() {
         this.feedbackMsg = '';
         this.beneficiaries.push({
@@ -306,22 +345,22 @@
               name: 'Choose File'
           }
         });
-      },      
+      },
       removeFileRow: function(index) {
         this.uploadedFiles.splice(index, 1);
       },
       removeEthAddress: function(index) {
         this.beneficiaries.splice(index, 1);
         this.feedbackMsg = '';
-      },      
+      },
       setFilename: function(event, row) {
         var file = event.target.files[0];
         row.file = file
       },
       generateInfuraUrl: function (CID) {
         return "https://ipfs.infura.io/ipfs/"+this.ipfsHashs[CID].path;
-      }      
-    }   
+      }
+    }
   }
 </script>
 
@@ -347,5 +386,9 @@
 
 .fileContainer [type=file] {
     cursor: pointer;
+}
+.v-input.inputNumber input{
+  font-size:50px;
+  max-height: 100px;
 }
 </style>

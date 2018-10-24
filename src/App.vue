@@ -1,49 +1,45 @@
 <template>
-  <v-app>
+  <v-app dark>
     <v-navigation-drawer
       fixed
-      :mini-variant="miniVariant"
-      v-model="drawer"
+      :clipped="$vuetify.breakpoint.mdAndUp"
       app
+      v-model="drawer"
     >
-      <v-list>
-        <v-list-group 
-          value="true"
-          v-for="(menuCategories, i) in menuCategories"
-          :key="i"
-        >
-          <v-list-tile slot="activator">
+      <v-list dense>
+        <template v-for="item in items">
+          <v-list-tile  
+          :key="item.text"
+          :to="item.url"
+            >
+            <v-list-tile-action>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-tile-action>
             <v-list-tile-content>
-              <v-list-tile-title>{{ menuCategories.title }}</v-list-tile-title>
+              <v-list-tile-title>
+                <p>{{ item.text }}</p>
+              </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
-          <v-list>
-            <v-list-tile 
-                  v-for="subItem in menuCategories.items"
-                  :key="subItem.title"
-                  :to="subItem.url"
-            >
-              <v-list-tile-content>
-                <v-list-tile-title v-text="subItem.title" ></v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-          </v-list>
-        </v-list-group>
+        </template>
       </v-list>
     </v-navigation-drawer>
 
-    <v-toolbar fixed app :clipped-left="clipped">
-       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title v-text="title"></v-toolbar-title>
+    <v-toolbar fixed app color="#1262B2" :clipped-left="$vuetify.breakpoint.mdAndUp">
+      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+        <img
+          width="100px"
+          src="@/assets/logo-v03-19.png"
+        >
       <v-spacer></v-spacer>
     </v-toolbar>
-    <v-content>
+    <v-content class="backgroundPageColor">
       <div id="app">
         <router-view></router-view>
       </div>
     </v-content>
     <v-footer :fixed="fixed" app>
-      <span>&copy; Legacy 2017</span>
+      <span class="ml-4">&copy; Legacy 2018</span>
     </v-footer>
   </v-app>
 </template>
@@ -56,30 +52,22 @@ export default {
         clipped: false,
         drawer: true,
         fixed: false,
-        menuCategories: [
-          { 
-            icon: 'bubble_chart',
-            title: 'CREATE A LEGACY',
-            items: [{
-                    title: 'Create a legacy',
-                    url: 'createLegacy',
-                  },
-                  {
-                    title: 'Manage my legacy',
-                    url: 'editLegacy',                    
-                  }
-                  ]
-           },
-          { 
-            icon: 'bubble_chart', 
-            title: 'VIEW MY LEGACY' ,
-            items: [{
-                    title: 'My legacy',
-                    url: 'getMyLegacy',                    
-                  }
-                  ]         
-            },
-        ],
+          items: [{
+                  icon: 'add',
+                  text: 'Create a legacy',
+                  url: 'createLegacy',
+                },
+                {
+                  icon: 'edit',
+                  text: 'Manage my legacy',
+                  url: 'editLegacy',                    
+                },
+                {
+                  icon: 'assignment',
+                  text: 'My legacy',
+                  url: 'getMyLegacy',                    
+                }
+                ],
         miniVariant: false,
         right: true,
         rightDrawer: false,
@@ -88,4 +76,3 @@ export default {
     }
 }
 </script>
-
