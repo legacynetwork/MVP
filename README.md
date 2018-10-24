@@ -12,7 +12,6 @@ npm install
 
 # Deploy smart contracts
 truffle compile
-truffle migrate --reset
 
 # serve with hot reload at localhost:8080
 npm run dev
