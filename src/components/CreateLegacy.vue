@@ -2,97 +2,116 @@
   <div class="editLegacy">
     <v-container grid-list-md>
       <v-layout row wrap>
-        <v-flex xs12 >
+        <v-flex xs12 sm10 offset-sm1 >
+          <h2 class="display-2  mb-3">Create a Legacy</h2>
+          <v-divider></v-divider>
           <v-form ref="form">
-            <h1 class="display-1 primary--text mb-3">Your beneficiaries</h1>
-            <v-flex
-              v-for="(row, i) in beneficiaries"
-              :key="`A-${i}`"
-              >
-              <v-card>
-                <v-card-title class="text-sm-left pb-0" primary-title>
-                  <span class="headline">Beneficiary n°{{i+1}}</span><br>
-                  <v-card-text class="pb-0 pt-0">
-                    <v-layout align-center row wrap>
-                        <v-flex d-flex xs12 sm5>
-                          <v-text-field v-model="row.ethAddress"
-                                        label="Beneficiary address"
-                                        :error-messages="ethAddressErrors"
-                                        :counter="42"
-                                        :rules="ethAddressRules"
-                          ></v-text-field>
-                        </v-flex>
-                        <v-flex d-flex xs12 sm7>
-                          <v-textarea v-model="row.beneficiaryMessage"
-                                      :error-messages="newMessageErrors"
-                                      :rules="newMessageRules"
-                                      label="Write a message to your beneficiary..."
-                                      auto-grow
-                                      rows="1"
-                                      required
-                          ></v-textarea>
-                        </v-flex>
-                      </v-layout>
-                  </v-card-text>
+            <div class="backgroundPrimaryCardColor">
+              <v-card-title class="text-sm-left pb-0" primary-title>
+                <h3 class="display-1 pl-4 mb-3">Your beneficiaries</h3>
+                <v-card-text class="pb-0 pt-0">
+                  <v-flex
+                    v-for="(row, i) in beneficiaries"
+                    :key="`A-${i}`"
+                    >
+                    <v-card class="backgroundSecondaryCardColor">
+                      <v-card-title class="text-sm-left pb-0" primary-title>
+                        <v-card-text class="pt-0">
+                          <v-layout align-center row wrap>
+                            <v-flex xs12 sm1>
+                              <v-icon size="50">account_box</v-icon>
+                            </v-flex>
+                            <v-flex d-flex xs12 sm4>
+                              <v-text-field v-model="row.ethAddress"
+                                              label="Beneficiary address"
+                                              :error-messages="ethAddressErrors"
+                                              :counter="42"
+                                              dark
+                                              :rules="ethAddressRules"
+                                ></v-text-field>
+                              </v-flex>
+                              <v-flex d-flex xs12 sm6>
+                                <v-textarea v-model="row.beneficiaryMessage"
+                                            :error-messages="newMessageErrors"
+                                            :rules="newMessageRules"
+                                            label="Write a message to your beneficiary..."
+                                            auto-grow
+                                            rows="1"
+                                            dark
+                                            required
+                                ></v-textarea>
+                              </v-flex>
+                              <v-flex d-flex xs12 sm1>
+                                <v-btn
+                                    @click="removeEthAddress(`A-${i}`);"
+                                    color="error"
+                                    flat
+                                  >
+                                  <v-icon>clear</v-icon>
+                                </v-btn>
 
-                  </v-card-title>
-                  <v-card-actions class="pt-0">
-                      <v-btn
-                        @click="removeEthAddress(`A-${i}`);"
-                        color="red"
-                        flat
-                        value="recent"
-                        class="red lighten-5 my-1"
-                      >
-                        <v-icon>clear</v-icon>
-                      </v-btn>
-                  </v-card-actions>
-                </v-card>
-            </v-flex>
+                              </v-flex>                              
+                            </v-layout>
+                          </v-card-text>
+                        </v-card-title>
+                      </v-card>
+                  </v-flex>
+                </v-card-text>
 
-            <v-flex text-xs-center text-md-right>
-              <v-btn
-                @click="addBeneficiary"
-                color="primary"
-                flat
-                value="recent"
-                class="teal lighten-5"
-                fab
-              >
-                <v-icon>add</v-icon>
-              </v-btn>
-            </v-flex>
+                <v-flex text-xs-center text-md-right>
+                  <v-btn
+                    @click="addBeneficiary"
+                    color="grey"
+                    flat
+                    value="recent"
+                    class="accent"
+                    fab
+                  >
+                    <v-icon>add</v-icon>
+                  </v-btn>
+                </v-flex>
+            </v-card-title>
+          </div>
+          <div class="backgroundPrimaryCardColor mt-5">
+            <v-card-title class="text-sm-left" primary-title >
+              <h3 class="display-1 pl-4 mb-3">Contract settings</h3>
+              <v-card-text class="pb-0 pt-0">
+                <v-flex d-flex xs12>
+                  <v-card class="backgroundSecondaryCardColor">
+                    <v-card-title class="text-sm-left" primary-title>
+                      <span class="headline">Proof of Life Timer</span><br>
+                      <v-card-text class="pb-0 pt-0">
+                        <v-layout align-center row wrap>
+                          <v-flex d-flex xs12 sm9>
+                            In order for the contract to know that you are still
+                            alive, you'll need to provide us proof of life regularly by reseting a timer.
+                            Tell us how long (in  days) you want this timer to be (eg. 120).
+                          </v-flex>
+                          <v-flex d-flex xs12 sm3>
+                            <v-text-field v-model="tPol"
+                                          outline
+                                          height="100"
+                                          label="Time in days"
+                                          :error-messages="tPolErrors"
+                                          :rules="tPolRules"
+                                          dark
+                                          class="inputNumber"
+                            ></v-text-field>
+                          </v-flex>
+                        </v-layout>
+                      </v-card-text>
+                    </v-card-title>
+                  </v-card>
+                </v-flex>
+              </v-card-text>
+            </v-card-title>
+          </div>
+                <v-flex text-xs-center class="mt-4">
+                  <v-btn @click="submit" color="accent" class="textGrey" light> submit</v-btn>
+                  <v-btn @click="clear" color="grey" class="accent">clear</v-btn>
+                </v-flex>
+              </v-form>
 
-            <v-flex d-flex xs12>
-              <v-card >
-                <v-card-title class="text-sm-left" primary-title>
-                  <span class="headline">Proof of Life Timer</span><br>
-                  <v-card-text class="pb-0 pt-0">
-                    <v-layout align-center row wrap>
-                      <v-flex d-flex xs12 sm9>
-                        In order for the contract to know that you are still
-                        alive, you'll need to provide us proof of life regularly by reseting a timer.
-                        Tell us how long (in days) you want this timer to be (eg. 120).
-                      </v-flex>
-                      <v-flex d-flex xs12 sm3>
-                        <v-text-field v-model="tPol"
-                                      label="Time in days"
-                                      :error-messages="tPolErrors"
-                                      :rules="tPolRules"
-                        ></v-text-field>
-                      </v-flex>
-                    </v-layout>
-                  </v-card-text>
-                </v-card-title>
-              </v-card>
-            </v-flex>
-            <v-flex text-xs-center class="mt-4">
-              <v-btn @click="submit" color="primary">submit</v-btn>
-              <v-btn @click="clear" color="primary" flat class="teal lighten-5">
-                clear
-              </v-btn>
-            </v-flex>
-          </v-form>
           <v-flex v-if="isLoading">
             <div class="text-xs-center">
               <v-progress-circular
@@ -351,5 +370,9 @@
 
 .fileContainer [type=file] {
     cursor: pointer;
+}
+.v-input.inputNumber input{
+  font-size:50px;
+  max-height: 100px;
 }
 </style>
