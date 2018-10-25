@@ -76,7 +76,7 @@ contract('Legacy basic test', async (accounts) => {
     let newBenefAdd2  = await instance.beneficiaryData.call(accounts[2]);
     assert.equal(newBenefAdd1.valueOf(), messageAdds[0], "Unexpected message address");
     assert.equal(newBenefAdd2.valueOf(), messageAdds[1], "Unexpected message address");
-  });  
+  });
 
   it("should check beneficiary exists", async () => {
     let instance = await Legacy.deployed();
@@ -93,8 +93,8 @@ contract('Legacy basic test', async (accounts) => {
 
   it("should return owner address", async () => {
     let instance = await Legacy.deployed();
-    let owner = await instance.getOwner();
+    let owner = await instance.getOwnerAddress();
     assert.equal(owner.valueOf(), accounts[0], "Contrat owner address does not correspond to accounts[0]");
-  });  
-  
+  });
+
 });
