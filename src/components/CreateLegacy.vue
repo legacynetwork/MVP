@@ -133,7 +133,7 @@
               <v-alert
                 :value="true"
                 type="success"
-                dismissible="true"
+                dismissible
                 transition="scale-transition"
                 >
                 <p>{{feedbackMsg}}</p>
@@ -190,7 +190,6 @@
   import util from "@/js/util"
 
    export default {
-    name: 'editLegacy',
     data () {
       return {
         myName: '',
@@ -217,6 +216,8 @@
         ownerAddress: '',
         beneficiariesAddresses: [],
         beneficiariesMessages: [],
+        beneficiariesMessagesToUpload: [],
+        ipfsHashsFromIPFS: '',
         addressRequested: '',
         emailRules: [
           v => !!v || 'E-mail is required',
@@ -243,11 +244,16 @@
         if (this.$refs.form.validate()) {
           console.log("New instance!")
           this.isLoading = true;
-          ipfs.add(this.getMessagesToUploadFromBeneficiaries(this.beneficiaries), (err, ipfsHashs) => {
+          // this.ipfsHashsFromIPFS= {};
+          this.beneficiariesMessagesToUpload = this.getMessagesToUploadFromBeneficiaries(this.beneficiaries);
+          console.log("Messages à uploader: " + this.beneficiariesMessagesToUpload);
+          // this.ipfsHashsFromIPFS = await 
+          ipfs.add(this.beneficiariesMessagesToUpload, (err, ipfsHashs) => {
             if (err) {
               return console.log(err);
             }
             this.ipfsHashs = ipfsHashs;
+
             Legacy.createInstance(this.tPol, this.formatBenefiariesAddresses(this.beneficiaries),this.formatIpfsHashs(ipfsHashs)).then(instance => {
                 console.log(instance)
                 this.isLoading = false;
@@ -257,7 +263,7 @@
               }).catch(err => {
                 console.log(err)
               })
-          });
+          })
         }
       },
       clear () {
@@ -304,8 +310,9 @@
       getMessagesToUploadFromBeneficiaries: function(beneficiaries){
         var beneficiariesMessages = [];
         for(var i=0; i < beneficiaries.length; i++ ){
+          var messageTimeStamp = "\n\nMessage created: " + new Date() + " " + i;
           beneficiariesMessages.push({
-            content: Buffer.from(beneficiaries[i].beneficiaryMessage)
+            content: Buffer.from(beneficiaries[i].beneficiaryMessage + messageTimeStamp)
           })
         }
         return beneficiariesMessages;
