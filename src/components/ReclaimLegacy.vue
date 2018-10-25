@@ -1,114 +1,98 @@
 <template>
   <v-container grid-list-md>
-    <h1 class="display-1 primary--text">Beneficiary management</h1>
     <v-layout row wrap>
-        <v-flex d-flex xs12>
-          <v-form ref="form">
-            <v-card >
-              <v-card-title class="text-sm-left" primary-title>
-                <span class="headline">Your contract information</span><br>
+      <v-flex xs12 sm10 offset-sm1 >
+        <h2 class="display-2  mb-3">Reclaim a Legacy</h2>
+        <v-divider></v-divider>
+        <v-form ref="form">
+            <div class="backgroundPrimaryCardColor">
+              <v-card-title class="text-sm-left pb-0" primary-title>
+                <h3 class="display-1 pl-4 mb-3">Your contract information</h3>
                 <v-card-text class="pb-0 pt-0">
                   <v-layout align-center row wrap>
-                    <v-flex d-flex xs12>
-                      Enter informations about your contract
-                    </v-flex>  
                     <v-flex d-flex xs12>
                       <v-text-field v-model="smartContractAddress"
                                     label="Smart contract address (0x...)"
                                     :error-messages="ethAddressErrors"
                                     :counter="42"
-                                    :rules="ethAddressRules"    
+                                    :rules="ethAddressRules"
                       ></v-text-field>
-                    </v-flex>  
+                    </v-flex>
                   </v-layout>
-                </v-card-text>
-              </v-card-title>
-              <v-card-actions class="pt-0">
-                  <v-btn 
-                    @click="submit"
-                    color="success"
-                    value="recent"
-                  >
-                    Search
-                  </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-form>
+              </v-card-text>
+            </v-card-title>
+          </div>
+          <v-flex text-xs-right class="mr-5">
+            <v-btn
+              @click="submit"
+              color="grey"
+              flat
+              value="recent"
+              class="warning"
+            >
+              Search
+            </v-btn>
+          </v-flex>
+        </v-form>
+      </v-flex>
+    </v-layout>
+      <v-layout row wrap>
+        <v-flex xs12 sm10 offset-sm1 >
+          <v-flex xs12 v-if="errorMessage">
+            <v-alert
+              :value="true"
+              type="warning"
+              dismissible
+              transition="scale-transition"
+              >
+              <p>{{errorMessage}}</p>
+            </v-alert>
+          </v-flex>
+          <v-flex xs12 v-if="messageTestatorAlive">
+            <v-alert
+              v-model="alertTestatorAlive"
+              type="warning"
+              dismissible
+              transition="scale-transition"
+              >
+              <p>{{messageTestatorAlive}}</p>
+            </v-alert>
+          </v-flex>
+          <v-flex xs12 v-if="messageIsBeneficiary">
+            <v-alert
+              v-model="alertIsBeneficiary"
+              type="warning"
+              dismissible
+              transition="scale-transition"
+              >
+              <p>{{messageIsBeneficiary}}</p>
+            </v-alert>
+          </v-flex>          
         </v-flex>
       </v-layout>
-      <v-layout row wrap>
-        <v-flex xs12 v-if="errorMessage">
-          <v-card color="error" class="white--text">
-            <v-card-title class="text-sm-left" primary-title>
-              <div>
-                <span class="headline">{{errorMessage}}</span><br>
-              </div>
-            </v-card-title>
-          </v-card>
-        </v-flex>   
-        <v-flex xs12 v-if="messageTestatorAlive">
-          <v-card color="success" class="white--text">
-            <v-card-title class="text-sm-left" primary-title>
-              <div>
-                <span class="headline">{{messageTestatorAlive}}</span><br>
-              </div>
-            </v-card-title>
-          </v-card>
-        </v-flex>           
-        <v-flex xs12 v-if="messageIsBeneficiary">
-          <v-card color="success" class="white--text">
-            <v-card-title class="text-sm-left" primary-title>
-              <div>
-                <span class="headline">{{messageIsBeneficiary}}</span><br>
-              </div>
-            </v-card-title>
-          </v-card>
-        </v-flex>               
-
-        <v-flex xs12 v-if="beneficiariesCID">
-          <v-card >
-            <v-card-title class="text-sm-left" primary-title>
-              <div>
-                <span class="headline">Your file</span><br>
-                <span>Files link: <a v-bind:href="generateInfuraUrl()">my file</a></span>
-              </div>
-            </v-card-title>
-          </v-card>
+      <v-layout row id="result" >
+        <v-flex xs12 sm10 offset-sm1 >
+          <v-flex xs12 v-if="beneficiariesCID">
+            <v-layout row wrap>
+              <v-flex xs12>
+                <v-card color="#1262B2">
+                  <v-card-title primary-title >
+                    <v-flex d-flex xs12 sm8 class="text-xs-left">
+                      <p>
+                      <v-icon size="50">account_box</v-icon>
+                      {{instance.userAddress}}</p>
+                    </v-flex>
+                    <v-flex d-flex xs12 sm4 class="text-xs-right">
+                      <p><v-icon size="30">attach_file</v-icon><a v-bind:href="generateInfuraUrl()">File link</a></p>
+                    </v-flex>
+                  </v-card-title>
+                </v-card>
+              </v-flex>
+            </v-layout>
+          </v-flex>
         </v-flex>
       </v-layout>
     </v-container>
-
-    <!-- <v-flex d-flex xs11 sm4 offset-xs1>
-      <v-btn @click.native="getSmartContractInstance">Get instance</v-btn>
-    </v-flex>
-
-    <v-flex d-flex xs11 sm4 offset-xs1>
-      <v-btn @click.native="getPoLTimerLen">Get tPol</v-btn>
-    </v-flex>
-    <v-flex xs3 sm6 text-xs-left offset-xs1>
-      <div>
-        tPol : {{tPol}}
-      </div>
-    </v-flex>
-
-    <v-flex d-flex xs11 sm4 offset-xs1>
-      <v-btn @click.native="getTZero">Get tZero</v-btn>
-    </v-flex>
-    <v-flex xs3 sm6 text-xs-left offset-xs1>
-      <div>
-        tZero : {{tZero}}
-      </div>
-    </v-flex>    
-
-    <v-flex d-flex xs11 sm4 offset-xs1>
-      <v-btn @click.native="getTime">Get time</v-btn>
-    </v-flex>
-    <v-flex xs3 sm6 text-xs-left offset-xs1>
-      <div>
-        time : {{time}}
-      </div>
-    </v-flex> -->
-
 </template>
 
 <script>
@@ -127,6 +111,8 @@
         messageTestatorAlive: '',
         messageIsBeneficiary: '',
         beneficiariesCID: '',
+        alertIsBeneficiary: true,
+        alertTestatorAlive: true,
         time: '',
         tZero: '',
         ethAddressRules: [

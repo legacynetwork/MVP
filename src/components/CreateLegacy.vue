@@ -70,50 +70,50 @@
                     <v-icon>add</v-icon>
                   </v-btn>
                 </v-flex>
-            </v-card-title>
-          </div>
-          <div class="backgroundPrimaryCardColor mt-5">
-            <v-card-title class="text-sm-left" primary-title >
-              <h3 class="display-1 pl-4 mb-3">Contract settings</h3>
-              <v-card-text class="pb-0 pt-0">
-                <v-flex d-flex xs12>
-                  <v-card class="backgroundSecondaryCardColor">
-                    <v-card-title class="text-sm-left" primary-title>
-                      <span class="headline">Proof of Life Timer</span><br>
-                      <v-card-text class="pb-0 pt-0">
-                        <v-layout align-center row wrap>
-                          <v-flex d-flex xs12 sm1>
-                            <v-icon size="50">timelapse</v-icon>
-                          </v-flex>
-                          <v-flex d-flex xs12 sm8>
-                           <p> In order for the contract to know that you are still
-                            alive, you'll need to provide us proof of life regularly by reseting a timer.
-                            Tell us how long (in  days) you want this timer to be (eg. 120).</p>
-                          </v-flex>
-                          <v-flex d-flex xs12 sm3>
-                            <v-text-field v-model="tPol"
-                                          outline
-                                          height="100"
-                                          label="Time in days"
-                                          :error-messages="tPolErrors"
-                                          :rules="tPolRules"
-                                          dark
-                                          class="inputNumber"
-                            ></v-text-field>
-                          </v-flex>
-                        </v-layout>
-                      </v-card-text>
-                    </v-card-title>
-                  </v-card>
-                </v-flex>
-              </v-card-text>
-            </v-card-title>
-          </div>
-                <v-flex text-xs-center class="mt-4">
-                  <v-btn @click="submit" color="warning" class="textGrey" light> submit</v-btn>
-                  <v-btn @click="clear" color="grey" class="accent">clear</v-btn>
-                </v-flex>
-              </v-form>
+              </v-card-title>
+            </div>
+            <div class="backgroundPrimaryCardColor mt-5">
+              <v-card-title class="text-sm-left" primary-title >
+                <h3 class="display-1 pl-4 mb-3">Contract settings</h3>
+                <v-card-text class="pb-0 pt-0">
+                  <v-flex d-flex xs12>
+                    <v-card class="backgroundSecondaryCardColor">
+                      <v-card-title class="text-sm-left" primary-title>
+                        <span class="headline">Proof of Life Timer</span><br>
+                        <v-card-text class="pb-0 pt-0">
+                          <v-layout align-center row wrap>
+                            <v-flex d-flex xs12 sm1>
+                              <v-icon size="50">timelapse</v-icon>
+                            </v-flex>
+                            <v-flex d-flex xs12 sm8>
+                            <p> In order for the contract to know that you are still
+                              alive, you'll need to provide us proof of life regularly by reseting a timer.
+                              Tell us how long (in  days) you want this timer to be (eg. 30).</p>
+                            </v-flex>
+                            <v-flex d-flex xs12 sm3>
+                              <v-text-field v-model="tPol"
+                                            outline
+                                            height="100"
+                                            label="Time in days"
+                                            :error-messages="tPolErrors"
+                                            :rules="tPolRules"
+                                            dark
+                                            class="inputNumber"
+                              ></v-text-field>
+                            </v-flex>
+                          </v-layout>
+                        </v-card-text>
+                      </v-card-title>
+                    </v-card>
+                  </v-flex>
+                </v-card-text>
+              </v-card-title>
+            </div>
+            <v-flex text-xs-center class="mt-4">
+              <v-btn @click="clear" color="grey" class="accent">clear</v-btn>
+              <v-btn @click="submit" color="warning" class="textGrey" light> submit</v-btn>
+            </v-flex>
+          </v-form>
 
           <v-flex v-if="isLoading">
             <div class="text-xs-center">
