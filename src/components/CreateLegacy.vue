@@ -41,6 +41,11 @@
                                             required
                                 ></v-textarea>
                               </v-flex>
+                              <v-flex d-flex xs12 sm5>
+                                <v-text-field v-model="row.personalKey"
+                                              label="Personal key"
+                                ></v-text-field>
+                              </v-flex>
                               <v-flex d-flex xs12 sm1>
                                 <v-btn
                                     @click="removeEthAddress(`A-${i}`);"
@@ -50,7 +55,7 @@
                                   <v-icon>clear</v-icon>
                                 </v-btn>
 
-                              </v-flex>                              
+                              </v-flex>
                             </v-layout>
                           </v-card-text>
                         </v-card-title>
@@ -115,6 +120,35 @@
                 </v-flex>
               </v-form>
 
+<<<<<<< HEAD
+=======
+            <v-flex d-flex xs12>
+              <v-card >
+                <v-card-title class="text-sm-left" primary-title>
+                  <span class="headline">Proof of life time</span><br>
+                  <v-card-text class="pb-0 pt-0">
+                    <v-layout align-center row wrap>
+                      <v-flex d-flex xs12 sm9>
+                        Provide proof of life time. This time is used to set the longest period of inactivity before you declare yourself dead
+                      </v-flex>
+                      <v-flex d-flex xs12 sm3>
+                        <v-text-field v-model="tPol"
+                                      label="Time in days"
+                                      :error-messages="tPolErrors"
+                                      :rules="tPolRules"
+                        ></v-text-field>
+                      </v-flex>
+                    </v-layout>
+                  </v-card-text>
+                </v-card-title>
+              </v-card>
+            </v-flex>
+            <v-flex text-xs-center>
+              <v-btn @click="submit" color="success">submit</v-btn>
+              <v-btn @click="clear" color="warning">clear</v-btn>
+            </v-flex>
+          </v-form>
+>>>>>>> feat/message-encryption
           <v-flex v-if="isLoading">
             <div class="text-xs-center">
               <v-progress-circular
@@ -171,6 +205,7 @@
                       <v-flex d-flex xs12 md7>
                         <p>{{beneficiary.ethAddress}}
                         <v-icon size="30">attach_file</v-icon><a v-bind:href="generateInfuraUrl(i)">File link</a></p>
+                        <p>Personal decryption key: {{beneficiary.personalKey}}</p>
                       </v-flex>
                     </v-card-title>
                   </v-card>
@@ -209,7 +244,8 @@
           file: {
               name: '',
               path: '',
-          }
+          },
+          personalKey: ""
         }],
         feedbackMsg: '',
         ipfsHashs: [],
@@ -247,7 +283,7 @@
           // this.ipfsHashsFromIPFS= {};
           this.beneficiariesMessagesToUpload = this.getMessagesToUploadFromBeneficiaries(this.beneficiaries);
           console.log("Messages à uploader: " + this.beneficiariesMessagesToUpload);
-          // this.ipfsHashsFromIPFS = await 
+          // this.ipfsHashsFromIPFS = await
           ipfs.add(this.beneficiariesMessagesToUpload, (err, ipfsHashs) => {
             if (err) {
               return console.log(err);
@@ -275,7 +311,8 @@
             file: {
                 name: '',
                 path: '',
-            }
+            },
+            personalKey: ""
           }]
       },
       deploy: function () {
@@ -308,11 +345,20 @@
         })
       },
       getMessagesToUploadFromBeneficiaries: function(beneficiaries){
-        var beneficiariesMessages = [];
+        let beneficiariesMessages = [];
+        let msgToUpload = "";
+        let key = "";
+        let CryptoJS = require("crypto-js");
         for(var i=0; i < beneficiaries.length; i++ ){
           var messageTimeStamp = "\n\nMessage created: " + new Date() + " " + i;
+          msgToUpload =  beneficiaries[i].beneficiaryMessage + messageTimeStamp;
+          if(beneficiaries[i].personalKey) {
+            key = beneficiaries[i].personalKey;
+            msgToUpload =  CryptoJS.AES.encrypt(msgToUpload, key).toString();
+            console.log("msg to upload:" +  msgToUpload);
+          }
           beneficiariesMessages.push({
-            content: Buffer.from(beneficiaries[i].beneficiaryMessage + messageTimeStamp)
+            content: Buffer.from(msgToUpload)
           })
         }
         return beneficiariesMessages;
@@ -341,7 +387,8 @@
           file: {
               name: '',
               path: '',
-          }
+          },
+          personalKey: ""
         });
       },
       addRow: function() {
