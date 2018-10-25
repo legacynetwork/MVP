@@ -41,11 +41,16 @@
                                             required
                                 ></v-textarea>
                               </v-flex>
-                              <v-flex d-flex xs12 sm5>
-                                <v-text-field v-model="row.personalKey"
-                                              label="Personal key"
-                                ></v-text-field>
-                              </v-flex>
+                              <v-layout row wrap>
+                                <v-flex xs12 sm1 mr-2>
+                                  <v-icon size="50">vpn_key</v-icon>
+                                </v-flex>
+                                <v-flex d-flex xs12 sm7>
+                                  <v-text-field v-model="row.personalKey"
+                                                label="Your beneficiary's personal decryption key"
+                                  ></v-text-field>
+                                </v-flex>
+                              </v-layout>
                               <v-flex d-flex xs12 sm1>
                                 <v-btn
                                     @click="removeEthAddress(`A-${i}`);"
@@ -120,35 +125,6 @@
                 </v-flex>
               </v-form>
 
-<<<<<<< HEAD
-=======
-            <v-flex d-flex xs12>
-              <v-card >
-                <v-card-title class="text-sm-left" primary-title>
-                  <span class="headline">Proof of life time</span><br>
-                  <v-card-text class="pb-0 pt-0">
-                    <v-layout align-center row wrap>
-                      <v-flex d-flex xs12 sm9>
-                        Provide proof of life time. This time is used to set the longest period of inactivity before you declare yourself dead
-                      </v-flex>
-                      <v-flex d-flex xs12 sm3>
-                        <v-text-field v-model="tPol"
-                                      label="Time in days"
-                                      :error-messages="tPolErrors"
-                                      :rules="tPolRules"
-                        ></v-text-field>
-                      </v-flex>
-                    </v-layout>
-                  </v-card-text>
-                </v-card-title>
-              </v-card>
-            </v-flex>
-            <v-flex text-xs-center>
-              <v-btn @click="submit" color="success">submit</v-btn>
-              <v-btn @click="clear" color="warning">clear</v-btn>
-            </v-flex>
-          </v-form>
->>>>>>> feat/message-encryption
           <v-flex v-if="isLoading">
             <div class="text-xs-center">
               <v-progress-circular
@@ -203,9 +179,15 @@
                         <p>Beneficiary {{i+1}}:</p>
                       </v-flex>
                       <v-flex d-flex xs12 md7>
-                        <p>{{beneficiary.ethAddress}}
-                        <v-icon size="30">attach_file</v-icon><a v-bind:href="generateInfuraUrl(i)">File link</a></p>
-                        <p>Personal decryption key: {{beneficiary.personalKey}}</p>
+                        <p>{{beneficiary.ethAddress}}</p>
+                      </v-flex>
+                      <v-flex xs12 md7 offset-md5 text-lg-left>
+                          <v-icon size="30">attach_file</v-icon>
+                          <a v-bind:href="generateInfuraUrl(i)">File link</a>
+                      </v-flex>
+                      <v-flex xs12 md7 offset-md5 text-lg-left>
+                            <v-icon size="30" class="mr-1">vpn_key</v-icon>
+                            Personal decryption key: <i>{{beneficiary.personalKey}}</i>
                       </v-flex>
                     </v-card-title>
                   </v-card>
