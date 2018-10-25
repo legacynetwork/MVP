@@ -279,16 +279,15 @@
         let CryptoJS = require("crypto-js");
         for(var i=0; i < beneficiaries.length; i++ ){
           msgToUpload =  beneficiaries[i].beneficiaryMessage;
-          // if(beneficiaries[i].personalKey) {
-          //   key = beneficiaries[i].personalKey;
-          //   msgToUpload =  CryptoJS.AES.encrypt(msgToUpload, key).toString();
-          //   console.log("msg to upload:" +  msgToUpload);
-          // }
+          if(beneficiaries[i].personalKey) {
+            key = beneficiaries[i].personalKey;
+            msgToUpload =  CryptoJS.AES.encrypt(msgToUpload, key).toString();
+            console.log("msg to upload:" +  msgToUpload);
+          }
           beneficiariesMessages.push({
             content: Buffer.from(msgToUpload)
           })
         }
-        console.log(beneficiariesMessages);
         return beneficiariesMessages;
       },
       formatBenefiariesAddresses: function(beneficiaries) {
