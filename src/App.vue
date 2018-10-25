@@ -55,17 +55,17 @@ export default {
           items: [{
                   icon: 'add',
                   text: 'Create a legacy',
-                  url: 'createLegacy',
+                  url: 'create-legacy',
                 },
                 {
                   icon: 'edit',
                   text: 'Manage my legacy',
-                  url: 'editLegacy',                    
+                  url: 'manage-legacy',                    
                 },
                 {
                   icon: 'assignment',
-                  text: 'My legacy',
-                  url: 'getMyLegacy',                    
+                  text: 'Reclaim a legacy',
+                  url: 'reclaim-legacy',                    
                 }
                 ],
         miniVariant: false,
