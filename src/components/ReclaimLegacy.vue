@@ -11,11 +11,12 @@
                 <v-card-text class="pb-0 pt-0">
                   <v-layout align-center row wrap>
                     <v-flex d-flex xs12>
-                      <v-text-field v-model="smartContractAddress"
-                                    label="Smart contract address (0x...)"
-                                    :error-messages="ethAddressErrors"
-                                    :counter="42"
-                                    :rules="ethAddressRules"
+                      <v-text-field
+                        v-model="smartContractAddress"
+                        label="Smart contract address (0x...)"
+                        :error-messages="ethAddressErrors"
+                        :counter="42"
+                        :rules="ethAddressRules"
                       ></v-text-field>
                     </v-flex>
                   </v-layout>
@@ -64,7 +65,7 @@
               type="warning"
               dismissible
               transition="scale-transition"
-              >
+            >
               <p>{{messageIsBeneficiary}}</p>
             </v-alert>
           </v-flex>
@@ -79,8 +80,9 @@
                   <v-card-title primary-title >
                     <v-flex d-flex xs12 sm8 class="text-xs-left">
                       <p>
-                      <v-icon size="50">account_box</v-icon>
-                      {{instance.userAddress}}</p>
+                        <v-icon size="50">account_box</v-icon>
+                        {{instance.userAddress}}
+                      </p>
                     </v-flex>
                     <v-flex d-flex xs12 sm4 class="text-xs-right">
                       <p><v-icon size="30">attach_file</v-icon><a v-bind:href="generateInfuraUrl()">File link</a></p>
@@ -109,8 +111,8 @@
                       </v-btn>
                     </v-flex>
                     <v-flex xs12 sm12 v-if="beneficiaryMessage">
-                        <div><h3>Your secret message:</h3></div>
-                        <div><p><i>{{beneficiaryMessage}}</i></p></div>
+                      <div><h3>Your secret message:</h3></div>
+                      <div><p><i>{{beneficiaryMessage}}</i></p></div>
                     </v-flex>
                   </v-card-text>
                 </v-card>
@@ -157,13 +159,13 @@
   methods: {
       submit: function () {
         if (this.$refs.form.validate()) {
-
-        Legacy.getSmartContractInstance(this.smartContractAddress).then(instance => {
-          if(instance)
-            console.log("Get instance from vue :" + instance);
-            this.instance = instance;
-            // check if user is the heir is part of the contract
-            this.isBeneficiary(instance.userAddress)
+          Legacy.getSmartContractInstance(this.smartContractAddress).then(instance => {
+            if(instance) {
+              console.log("Get instance from vue :" + instance);
+              this.instance = instance;
+              // check if user is one of the beneficiaries in this contract
+              this.isBeneficiary(instance.userAddress)
+            }
           }).catch(err => {
             console.log("Error submit : " + err)
           })
@@ -171,33 +173,33 @@
       },
       getPoLTimerLen: function () {
           Legacy.getPoLTimerLen().then(tPol => {
-          this.tPol = tPol/24/60/60
-          console.log("tPol is: " + tPol)
+          this.tPol = tPol/24/60/60;
+          console.log("tPol is: " + tPol);
         })
       },
       isBeneficiary: function (userAddress) {
-          Legacy.isBeneficiary(userAddress).then(isBeneficiary => {
-            if(isBeneficiary) {
-              this.messageIsBeneficiary = '';
-              this.getProofOfLife();
-            }else{
-              this.messageIsBeneficiary = "You are not a heir of this contract";
-            }
+        Legacy.isBeneficiary(userAddress).then(isBeneficiary => {
+          if(isBeneficiary) {
+            this.messageIsBeneficiary = '';
+            this.getProofOfLife();
+          } else {
+            this.messageIsBeneficiary = "You are not a heir of this contract";
+          }
         })
       },
       getProofOfLife: function () {
-          Legacy.getProofOfLife().then(isAlive => {
-            console.log("isAlive is: " + isAlive);
-             // testing mod.
-             // REPLACE BY LINE BELOW IN PRODUCTION
-             // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            if(isAlive){
-            // if(!isAlive){
-              this.messageTestatorAlive = '';
-              this.getBenefiaciesCID();
-            }else{
-              this.messageTestatorAlive = "Your testator is still alive. You can't get your legacy";
-            }
+        Legacy.getProofOfLife().then(isAlive => {
+          console.log("isAlive is: " + isAlive);
+           // testing mod.
+           // REPLACE BY LINE BELOW IN PRODUCTION
+           // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          if(isAlive) {
+          // if(!isAlive){
+            this.messageTestatorAlive = '';
+            this.getBenefiaciesCID();
+          } else {
+            this.messageTestatorAlive = "Contract owner is still alive. You can't get your legacy";
+          }
         })
       },
       getBenefiaciesCID: function () {

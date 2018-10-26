@@ -13,7 +13,7 @@
                   <v-flex
                     v-for="(row, i) in beneficiaries"
                     :key="`A-${i}`"
-                    >
+                  >
                     <v-card class="backgroundSecondaryCardColor">
                       <v-card-title class="text-sm-left pb-0" primary-title>
                         <v-card-text class="pt-0">
@@ -31,14 +31,15 @@
                                 ></v-text-field>
                               </v-flex>
                               <v-flex d-flex xs12 sm6>
-                                <v-textarea v-model="row.beneficiaryMessage"
-                                            :error-messages="newMessageErrors"
-                                            :rules="newMessageRules"
-                                            label="Write a message to your beneficiary..."
-                                            auto-grow
-                                            rows="1"
-                                            dark
-                                            required
+                                <v-textarea
+                                  v-model="row.beneficiaryMessage"
+                                  :error-messages="newMessageErrors"
+                                  :rules="newMessageRules"
+                                  label="Write a message to your beneficiary..."
+                                  auto-grow
+                                  rows="1"
+                                  dark
+                                  required
                                 ></v-textarea>
                               </v-flex>
                               <v-layout row wrap>
@@ -47,16 +48,16 @@
                                 </v-flex>
                                 <v-flex d-flex xs12 sm7>
                                   <v-text-field v-model="row.personalKey"
-                                                label="Your beneficiary's personal decryption key"
+                                    label="Your beneficiary's personal decryption key"
                                   ></v-text-field>
                                 </v-flex>
                               </v-layout>
                               <v-flex d-flex xs12 sm1>
                                 <v-btn
-                                    @click="removeEthAddress(`A-${i}`);"
-                                    color="error"
-                                    flat
-                                  >
+                                  @click="removeEthAddress(`A-${i}`);"
+                                  color="error"
+                                  flat
+                                >
                                   <v-icon>clear</v-icon>
                                 </v-btn>
 
@@ -101,14 +102,15 @@
                               Tell us how long (in  days) you want this timer to be (eg. 30).</p>
                             </v-flex>
                             <v-flex d-flex xs12 sm3>
-                              <v-text-field v-model="tPol"
-                                            outline
-                                            height="100"
-                                            label="Time in days"
-                                            :error-messages="tPolErrors"
-                                            :rules="tPolRules"
-                                            dark
-                                            class="inputNumber"
+                              <v-text-field
+                                v-model="tPol"
+                                outline
+                                height="100"
+                                label="Time in days"
+                                :error-messages="tPolErrors"
+                                :rules="tPolRules"
+                                dark
+                                class="inputNumber"
                               ></v-text-field>
                             </v-flex>
                           </v-layout>
@@ -145,7 +147,7 @@
                 type="success"
                 dismissible
                 transition="scale-transition"
-                >
+              >
                 <p>{{feedbackMsg}}</p>
               </v-alert>
             </v-flex>
@@ -167,7 +169,7 @@
             <v-flex
               v-for="(beneficiary, i) in beneficiaries"
               :key=i
-              >
+            >
               <v-layout row wrap>
                 <v-flex xs12>
                   <v-card color="#1262B2">
@@ -260,27 +262,29 @@
     methods: {
       submit () {
         if (this.$refs.form.validate()) {
-          console.log("New instance!")
+          console.log("New instance!");
           this.isLoading = true;
-          // this.ipfsHashsFromIPFS= {};
-          this.beneficiariesMessagesToUpload = this.getMessagesToUploadFromBeneficiaries(this.beneficiaries);
-          console.log("Messages à uploader: " + this.beneficiariesMessagesToUpload);
-          // this.ipfsHashsFromIPFS = await
+          this.beneficiariesMessagesToUpload =
+            this.getMessagesToUploadFromBeneficiaries(this.beneficiaries);
+          console.log("Messages to upload: " + this.beneficiariesMessagesToUpload);
           ipfs.add(this.beneficiariesMessagesToUpload, (err, ipfsHashs) => {
             if (err) {
-              return console.log(err);
+              console.error(err);
             }
             this.ipfsHashs = ipfsHashs;
-
-            Legacy.createInstance(this.tPol, this.formatBenefiariesAddresses(this.beneficiaries),this.formatIpfsHashs(ipfsHashs)).then(instance => {
-                console.log(instance)
-                this.isLoading = false;
-                this.instance = instance;
-                this.feedbackMsg = "Your messages have been successfully stored."
-                // TODO: scroll to result
-              }).catch(err => {
-                console.log(err)
-              })
+            Legacy.createInstance(
+              this.tPol,
+              this.formatBenefiariesAddresses(this.beneficiaries),
+              this.formatIpfsHashs(ipfsHashs))
+            .then(instance => {
+              console.log(instance)
+              this.isLoading = false;
+              this.instance = instance;
+              this.feedbackMsg = "Your messages have been successfully stored."
+              // TODO: scroll to result
+            }).catch(err => {
+              console.log(err)
+            })
           })
         }
       },
