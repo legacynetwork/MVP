@@ -67,7 +67,7 @@
               >
               <p>{{messageIsBeneficiary}}</p>
             </v-alert>
-          </v-flex>          
+          </v-flex>
         </v-flex>
       </v-layout>
       <v-layout row id="result" >
@@ -86,6 +86,33 @@
                       <p><v-icon size="30">attach_file</v-icon><a v-bind:href="generateInfuraUrl()">File link</a></p>
                     </v-flex>
                   </v-card-title>
+                  <v-card-text>
+                    <v-flex d-flex xs12 text-xs-left>
+                      <p>Please insert your personal decryption key to recover your message:</p>
+                    </v-flex>
+                    <v-flex d-flex xs12>
+                      <v-text-field
+                        v-model="personalKey"
+                        type="password"
+                        label="Your personal decryption key">
+                      </v-text-field>
+                    </v-flex>
+                    <v-flex text-xs-right class="mr-5">
+                      <v-btn
+                        @click="getMessage"
+                        color="grey"
+                        flat
+                        value="recent"
+                        class="warning"
+                      >
+                        Decrypt my message
+                      </v-btn>
+                    </v-flex>
+                    <v-flex xs12 sm12 v-if="beneficiaryMessage">
+                        <div><h3>Your secret message:</h3></div>
+                        <div><p><i>{{beneficiaryMessage}}</i></p></div>
+                    </v-flex>
+                  </v-card-text>
                 </v-card>
               </v-flex>
             </v-layout>
@@ -111,6 +138,8 @@
         messageTestatorAlive: '',
         messageIsBeneficiary: '',
         beneficiariesCID: '',
+        beneficiaryMessage: '',
+        personalKey: '',
         alertIsBeneficiary: true,
         alertTestatorAlive: true,
         time: '',
@@ -118,14 +147,14 @@
         ethAddressRules: [
           v => !!v || 'ETH address is required',
           v => /^(0x){1}[0-9a-fA-F]{40}$/i.test(v) || 'ETH address must be valid'
-        ]          
+        ]
       }
     },
     created: function () {
       Legacy.init();
-    },    
+    },
 
-  methods: {  
+  methods: {
       submit: function () {
         if (this.$refs.form.validate()) {
 
@@ -148,23 +177,27 @@
       },
       isBeneficiary: function (userAddress) {
           Legacy.isBeneficiary(userAddress).then(isBeneficiary => {
-          if(isBeneficiary){
-            this.messageIsBeneficiary = '';
-            this.getProofOfLife()
-          }else{
-            this.messageIsBeneficiary = "You are not a heir of this contract";
-          }
+            if(isBeneficiary) {
+              this.messageIsBeneficiary = '';
+              this.getProofOfLife();
+            }else{
+              this.messageIsBeneficiary = "You are not a heir of this contract";
+            }
         })
-      },      
+      },
       getProofOfLife: function () {
           Legacy.getProofOfLife().then(isAlive => {
-          console.log("isAlive is: " + isAlive);
-          if(!isAlive){
-            this.messageTestatorAlive = '';
-            this.getBenefiaciesCID();
-          }else{
-            this.messageTestatorAlive = "Your testator is still alive. You can't get your legacy";
-          }
+            console.log("isAlive is: " + isAlive);
+             // testing mod.
+             // REPLACE BY LINE BELOW IN PRODUCTION
+             // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if(isAlive){
+            // if(!isAlive){
+              this.messageTestatorAlive = '';
+              this.getBenefiaciesCID();
+            }else{
+              this.messageTestatorAlive = "Your testator is still alive. You can't get your legacy";
+            }
         })
       },
       getBenefiaciesCID: function () {
@@ -178,7 +211,20 @@
       generateInfuraUrl: function () {
         console.log("url : " + this.beneficiariesCID.path);
         return "https://ipfs.infura.io/ipfs/"+this.beneficiariesCID;
-      },    
+      },
+      getMessage: function () {
+        let CryptoJS = require("crypto-js");
+        ipfs.files.cat(this.beneficiariesCID,(err, fileBuffer) => {
+          let ciphertext = fileBuffer.toString();
+          console.log("Encrypted message: " +  ciphertext);
+          let bytes  = CryptoJS.AES.decrypt(ciphertext, this.personalKey);
+          this.beneficiaryMessage = bytes.toString(CryptoJS.enc.Utf8);
+          console.log("Plaintext: " +  this.beneficiaryMessage);
+          if (err) {
+            console.error(err);
+          }
+        })
+      },
       getTime: function () {
         console.log("Enter gettime");
           Legacy.getTime().then(time => {
@@ -192,7 +238,7 @@
           this.tZero = tZero;
           console.log("tZero is: " + tZero);
         })
-      }            
+      }
     }
   }
 </script>
