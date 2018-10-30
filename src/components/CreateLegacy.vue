@@ -214,7 +214,7 @@
         myName: '',
         myEmail: '',
         myEthAddress: '',
-        tPol: '',
+        tPol: 90,
         newMessageErrors: '',
         emailErrors: '',
         ethAddressErrors: '',

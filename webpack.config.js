@@ -1,12 +1,16 @@
 var path = require('path')
 var webpack = require('webpack')
+const nodeExternals = require('webpack-node-externals')
 
 module.exports = {
   entry: './src/main.js',
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: '/dist/',
-    filename: 'build.js'
+    filename: 'build.js',
+    // use absolute paths in sourcemaps (important for debugging via IDE)
+    devtoolModuleFilenameTemplate: '[absolute-resource-path]',
+    devtoolFallbackModuleFilenameTemplate: '[absolute-resource-path]?[hash]'
   },
   resolve: {
     extensions: ['.js', '.vue'],
@@ -62,7 +66,9 @@ module.exports = {
   performance: {
     hints: false
   },
-  devtool: '#eval-source-map'
+  // devtool: '#eval-source-map',
+  devtool: 'inline-cheap-module-source-map',
+  externals: [nodeExternals()]
 }
 
 if (process.env.NODE_ENV === 'production') {
