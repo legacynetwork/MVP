@@ -110,7 +110,7 @@
                                 :error-messages="tPolErrors"
                                 :rules="tPolRules"
                                 dark
-                                class="inputNumber"
+                                class="inputNumber tPolTxtField"
                               ></v-text-field>
                             </v-flex>
                           </v-layout>

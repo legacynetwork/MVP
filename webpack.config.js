@@ -68,7 +68,8 @@ module.exports = {
   },
   // devtool: '#eval-source-map',
   devtool: 'inline-cheap-module-source-map',
-  externals: [nodeExternals()]
+  // target: 'node',
+  // externals: [nodeExternals()] // uncomment for tests
 }
 
 if (process.env.NODE_ENV === 'production') {
