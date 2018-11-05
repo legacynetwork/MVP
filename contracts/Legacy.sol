@@ -4,11 +4,11 @@ pragma solidity ^0.4.24;
 
 
 contract Owned {
-    
+
     address owner;
-    
+
     constructor() public { owner = msg.sender; }
-    
+
     modifier onlyOwner {
         require(
             msg.sender == owner,
@@ -23,17 +23,17 @@ contract Legacy is Owned{
 
     // constant parameters
     uint256 constant DEFAULT_T_POL = 90 * 1 days;
-    
-    // state variables    
+
+    // state variables
     uint256 public tPoL;
-    uint256 public tZero;       
+    uint256 public tZero;
     address[] public beneficiaries;
-        
+
     mapping(address => bytes32) public beneficiaryData;
-    
+
     constructor(uint256 _tPoL, address[] _beneficiaries, bytes32[] _messageAdds) public {
         if(_tPoL > 0) tPoL = _tPoL * 1 days;
-        else tPoL = DEFAULT_T_POL;        
+        else tPoL = DEFAULT_T_POL;
         tZero = now + tPoL;
         addBeneficiaries(_beneficiaries, _messageAdds);
     }
@@ -65,20 +65,20 @@ contract Legacy is Owned{
         if(_tPoL > 0) tPoL = _tPoL * 1 days;
         resetPoLTimer();
     }
-    
+
     function claimFunds(address _beneficiary) public {
         require(isBeneficiary(_beneficiary));
         require(!getProofOfLife());
         _beneficiary.transfer(address(this).balance/beneficiaries.length);
         deleteBeneficiary(_beneficiary);
     }
-    
+
     function addBeneficiaries(address[] _beneficiaries, bytes32[] _messageAdds) public onlyOwner {
         // TODO: check if input data is valid
         for (uint8 i = 0; i < _beneficiaries.length; i++) {
             beneficiaryData[_beneficiaries[i]] = _messageAdds[i];
             if(!isBeneficiary(_beneficiaries[i])) beneficiaries.push(_beneficiaries[i]);
-        }                
+        }
         resetPoLTimer();
     }
 
@@ -106,7 +106,7 @@ contract Legacy is Owned{
             if( _beneficiary == beneficiaries[i]) return true;
         }
         return false;
-    }    
+    }
 
     function withdraw(uint amount) public onlyOwner {
         if (address(this).balance >= amount) {
@@ -118,11 +118,11 @@ contract Legacy is Owned{
     function getBeneficiaries() public view returns(address[]){
         return beneficiaries;
     }
-    
+
     function getBeneficiarieMessage(address _beneficiaryAddress) public view returns(bytes32){
         return beneficiaryData[_beneficiaryAddress];
-    }  
-    
+    }
+
     function kill() public onlyOwner { selfdestruct(owner); }
-    
+
 }
