@@ -182,7 +182,7 @@ contract Legacy is Owned{
     * @param _beneficiaryAddress The beneficiary address
     * @return Returns the message CID (bytes32) of the given beneficiary
     */
-    function getBeneficiarieMessage(address _beneficiaryAddress)
+    function getMessageCID(address _beneficiaryAddress)
         public view returns(bytes32)
     {
         return beneficiaryData[_beneficiaryAddress];

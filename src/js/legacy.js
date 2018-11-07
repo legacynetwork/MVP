@@ -114,7 +114,7 @@ const Legacy = {
     });
   },
 
-  getBenefiaciesAddresses: function () {
+  getBeneficiaryAddresses: function () {
     let self = this;
 
     return new Promise((resolve, reject) => {
@@ -196,11 +196,11 @@ const Legacy = {
     });
   },
 
-  getBenefiaciesMessage: function (beneficaryAddress) {
+  getBeneficiaryMessageCID: function (beneficaryAddress) {
     let self = this;
 
     return new Promise((resolve, reject) => {
-      self.instance.getBeneficiarieMessage(
+      self.instance.getMessageCID(
         beneficaryAddress,
         {from: window.web3.eth.accounts[0]}
       ).then(beneficiariesMessages => {

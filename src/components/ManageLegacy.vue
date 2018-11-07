@@ -69,7 +69,7 @@
                     <v-flex d-flex xs12>
                       <v-card class="backgroundSecondaryCardColor">
                         <v-card-title class="text-sm-left" primary-title>
-                          <span class="headline">Update Proof of Life Timer</span><br>
+                          <span class="headline">Proof of Life Timer</span><br>
                           <v-card-text class="pb-0 pt-0">
                             <v-layout align-center row wrap>
                               <v-flex d-flex xs12 sm1>
@@ -108,7 +108,7 @@
                   value="recent"
                   class="warning"
                 >
-                  Update PoL time
+                  Update
                 </v-btn>
               </v-flex>
             </v-form>
@@ -195,7 +195,7 @@
         alertNotYourContract: true,
         alertTpolUplated: true,
         messageIsBeneficiary: '',
-        beneficiariesCID: '',
+        beneficiaryCID: '',
         messagePingUpdated: "",
         time: '',
         tZero: '',
@@ -278,17 +278,9 @@
             )
         }
       },
-      getBenefiaciesCID: function () {
-        console.log("Get CID. User Address : " + this.instance.userAddress)
-        Legacy.getBenefiaciesMessage(this.instance.userAddress).then(beneficiariesCID => {
-          let ipfsHash = util.bytesToIpfsHash(beneficiariesCID)
-          this.beneficiariesCID = ipfsHash
-          console.log("Address is: " + ipfsHash)
-        })
-      },
       generateInfuraUrl: function () {
-        console.log("url : " + this.beneficiariesCID.path);
-        return "https://ipfs.infura.io/ipfs/"+this.beneficiariesCID;
+        console.log("url : " + this.beneficiaryCID.path);
+        return "https://ipfs.infura.io/ipfs/" + this.beneficiaryCID;
       },
       getTime: function () {
         console.log("Enter gettime");

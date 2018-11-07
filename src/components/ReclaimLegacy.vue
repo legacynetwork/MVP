@@ -73,16 +73,14 @@
       </v-layout>
       <v-layout row id="result" >
         <v-flex xs12 sm10 offset-sm1 >
-          <v-flex xs12 v-if="beneficiariesCID">
+          <v-flex xs12 v-if="beneficiaryCID">
             <v-layout row wrap>
               <v-flex xs12>
                 <v-card color="#1262B2">
                   <v-card-title primary-title >
-                    <v-flex d-flex xs12 sm8 class="text-xs-left">
-                      <p>
-                        <v-icon size="50">account_box</v-icon>
-                        {{instance.userAddress}}
-                      </p>
+                    <v-flex d-flex xs12 sm8 class="text-xs-left align-center">
+                      <v-icon size="50">account_box</v-icon>
+                        <h3>{{instance.userAddress}}</h3>
                     </v-flex>
                     <v-flex d-flex xs12 sm4 class="text-xs-right">
                       <p><v-icon size="30">attach_file</v-icon><a v-bind:href="generateInfuraUrl()">File link</a></p>
@@ -139,7 +137,7 @@
         errorMessage: '',
         messageTestatorAlive: '',
         messageIsBeneficiary: '',
-        beneficiariesCID: '',
+        beneficiaryCID: '',
         beneficiaryMessage: '',
         personalKey: '',
         alertIsBeneficiary: true,
@@ -196,27 +194,27 @@
           if(isAlive) {
           // if(!isAlive){
             this.messageTestatorAlive = '';
-            this.getBenefiaciesCID();
+            this.getBeneficiaryCID();
           } else {
             this.messageTestatorAlive = "Contract owner is still alive. You can't get your legacy";
           }
         })
       },
-      getBenefiaciesCID: function () {
-        console.log("Get CID. User Address : " + this.instance.userAddress)
-        Legacy.getBenefiaciesMessage(this.instance.userAddress).then(beneficiariesCID => {
-          let ipfsHash = util.bytesToIpfsHash(beneficiariesCID)
-          this.beneficiariesCID = ipfsHash
-          console.log("Address is: " + ipfsHash)
+      getBeneficiaryCID: function () {
+        console.log("Get CID. User Address : " + this.instance.userAddress);
+        Legacy.getBeneficiaryMessageCID(this.instance.userAddress).then(beneficiaryCID => {
+          let ipfsHash = util.bytesToIpfsHash(beneficiaryCID);
+          this.beneficiaryCID = ipfsHash;
+          console.log("Address is: " + ipfsHash);
         })
       },
       generateInfuraUrl: function () {
-        console.log("url : " + this.beneficiariesCID.path);
-        return "https://ipfs.infura.io/ipfs/"+this.beneficiariesCID;
+        console.log("url : " + this.beneficiaryCID.path);
+        return "https://ipfs.infura.io/ipfs/" + this.beneficiaryCID;
       },
       getMessage: function () {
         let CryptoJS = require("crypto-js");
-        ipfs.files.cat(this.beneficiariesCID,(err, fileBuffer) => {
+        ipfs.files.cat(this.beneficiaryCID,(err, fileBuffer) => {
           let ciphertext = fileBuffer.toString();
           console.log("Encrypted message: " +  ciphertext);
           let bytes  = CryptoJS.AES.decrypt(ciphertext, this.personalKey);
