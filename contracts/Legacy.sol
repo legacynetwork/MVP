@@ -2,7 +2,7 @@ pragma solidity ^0.4.24;
 
 /**
  * @title Owned
- * @dev Contract implementing a modifier to restrinct access to a contract
+ * @dev Contract implementing a simple access control modifier
  */
 contract Owned {
 
@@ -34,8 +34,9 @@ contract Legacy is Owned{
     address[] public beneficiaries; // The beneficiaries of this contract
 
     // This mapping contains data associated to each beneficiary address.
-    // In current versions, it's simply a bytes32 with the IPFS CID of the
-    // message addressed to the beneficiary.
+    // Currently, the associated data is simply a bytes32 with the IPFS CID of
+    // the message addressed to the beneficiary. The CID must be properly
+    // formatted using a base58 decoder and removing the first two bytes.
     mapping(address => bytes32) public beneficiaryData;
 
     /**
@@ -66,7 +67,7 @@ contract Legacy is Owned{
     }
 
     /**
-    @dev Resets the PoL timer. Should only be called by the contract owner
+    * @dev Resets the PoL timer. Should only be called by the contract owner
     */
     function giveProofOfLife() public onlyOwner {
         resetPoLTimer();
@@ -82,11 +83,9 @@ contract Legacy is Owned{
 
     /**
     * @dev Resets the PoL timer. Should only be called by other functions in
-    *      this contract
+    *      this contract with the onlyOwner modifier
     */
     function resetPoLTimer() internal {
-        // TODO: make sure cannot be called externally by anyone
-        // apart from the owner
         tZero = tZero + tPoL;
     }
 
@@ -149,6 +148,7 @@ contract Legacy is Owned{
     }
 
     /**
+    * @dev Checks if a given address is in the state variable array beneficiaries
     * @param _beneficiary The address of the beneficiary
     * @return True if _beneficiary is in the array beneficiaries
     */
@@ -160,8 +160,8 @@ contract Legacy is Owned{
     }
 
     /**
-    * @dev Transfer funds from this contract to the owner address
-    * @param _amount The amount of funds to be transfered
+    * @dev Transfer funds from this contract to the contract owner address
+    * @param amount The amount of funds to be transfered
     */
     function withdraw(uint amount) public onlyOwner {
         if (address(this).balance >= amount) {
@@ -171,6 +171,7 @@ contract Legacy is Owned{
     }
 
     /**
+    * @dev A simple getter for the state varible array beneficiaries
     * @return Returns the array of beneficiaries
     */
     function getBeneficiaries() public view returns(address[]){
@@ -178,10 +179,12 @@ contract Legacy is Owned{
     }
 
     /**
-    * @return Returns the message CID of a given beneficiary
     * @param _beneficiaryAddress The beneficiary address
+    * @return Returns the message CID (bytes32) of the given beneficiary
     */
-    function getBeneficiarieMessage(address _beneficiaryAddress) public view returns(bytes32){
+    function getBeneficiarieMessage(address _beneficiaryAddress)
+        public view returns(bytes32)
+    {
         return beneficiaryData[_beneficiaryAddress];
     }
 
