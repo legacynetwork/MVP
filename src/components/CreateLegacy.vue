@@ -21,13 +21,14 @@
                             <v-icon size="50">account_box</v-icon>
                           </v-flex>
                           <v-flex d-flex xs12 sm4>
-                            <v-text-field v-model="row.ethAddress"
-                                            label="Beneficiary address"
-                                            :error-messages="ethAddressErrors"
-                                            :counter="42"
-                                            dark
-                                            :rules="ethAddressRules"
-                              ></v-text-field>
+                            <v-text-field
+                              v-model="row.ethAddress"
+                              label="Beneficiary address"
+                              :error-messages="ethAddressErrors"
+                              :counter="42"
+                              dark
+                              :rules="ethAddressRules"
+                            ></v-text-field>
                             </v-flex>
                             <v-flex d-flex xs12 sm6>
                               <v-textarea
@@ -120,6 +121,17 @@
               </v-card-text>
             </v-card-title>
           </div>
+          <v-flex>
+            <v-alert
+              :value="true"
+              type="error"
+              dismissible
+              transition="scale-transition"
+              v-if="contractCreationError"
+            >
+              {{contractCreationErrorMsg}}
+            </v-alert>
+          </v-flex>
           <v-flex text-xs-center class="mt-4">
             <v-btn @click="clear" color="grey" class="accent">clear</v-btn>
             <v-btn @click="submit" color="warning" class="textGrey" light> submit</v-btn>
@@ -146,8 +158,9 @@
               type="success"
               dismissible
               transition="scale-transition"
+              class="fontLarge"
             >
-              <p>{{feedbackMsg}}</p>
+              {{feedbackMsg}}
             </v-alert>
           </v-flex>
           <v-flex xs12>
@@ -169,31 +182,35 @@
             v-for="(beneficiary, i) in beneficiaries"
             :key=i
           >
-            <v-layout row wrap>
-              <v-flex xs12>
-                <v-card color="#1262B2">
-                  <v-card-title class="text-sm-left" primary-title>
-                    <v-flex d-flex xs12 md1>
-                      <v-icon size="50">account_box</v-icon>
-                    </v-flex>
-                    <v-flex d-flex xs12 md4>
-                      <p>Beneficiary {{i+1}}:</p>
-                    </v-flex>
-                    <v-flex d-flex xs12 md7>
-                      <p>{{beneficiary.ethAddress}}</p>
-                    </v-flex>
-                    <v-flex xs12 md7 offset-md5 text-lg-left>
-                        <v-icon size="30">attach_file</v-icon>
-                        <a v-bind:href="generateInfuraUrl(i)">File link</a>
-                    </v-flex>
-                    <v-flex xs12 md7 offset-md5 text-lg-left>
-                          <v-icon size="30" class="mr-1">vpn_key</v-icon>
-                          Personal decryption key: <i>{{beneficiary.personalKey}}</i>
-                    </v-flex>
-                  </v-card-title>
-                </v-card>
-              </v-flex>
-            </v-layout>
+            <v-card color="#1262B2">
+              <v-card-title class="text-sm-left" primary-title>
+                <v-layout row wrap align-center>
+                  <v-flex d-flex xs12 md1>
+                    <v-icon size="50">account_box</v-icon>
+                  </v-flex>
+                  <v-flex d-flex xs12 md4 class="headline">
+                    Beneficiary {{i+1}}:
+                  </v-flex>
+                  <v-flex d-flex xs12 md7 class="fontLarge">
+                    {{beneficiary.ethAddress}}
+                  </v-flex>
+                </v-layout>
+              </v-card-title>
+              <v-card-text class="pt-0">
+                <v-layout row wrap align-center class="fontLarge">
+                  <v-flex xs12 md7 offset-md5 text-xs-left>
+                    <v-icon size="30">attach_file</v-icon>
+                    <a v-bind:href="generateInfuraUrl(i)">File link</a>
+                  </v-flex>
+                </v-layout>
+                <v-layout row wrap align-center class="fontLarge">
+                  <v-flex xs12 md7 offset-md5 text-xs-left>
+                    <v-icon size="30" class="mr-1">vpn_key</v-icon>
+                    Personal decryption key: <i>{{beneficiary.personalKey}}</i>
+                  </v-flex>
+                </v-layout>
+              </v-card-text>
+            </v-card>
           </v-flex>
         </v-flex>
       </v-flex>
@@ -242,7 +259,9 @@
         ethAddressRules: [
           v => !!v || 'An Ethereum address is required',
           v => /^(0x){1}[0-9a-fA-F]{40}$/i.test(v) || 'Please input a valid address'
-        ]
+        ],
+        contractCreationError: false,
+        contractCreationErrorMsg: "Something went wrong. Please try again later."
       }
     },
     created: function () {
@@ -255,40 +274,45 @@
           this.isLoading = true;
           this.beneficiariesMessagesToUpload =
             this.getMessagesToUploadFromBeneficiaries(this.beneficiaries);
-          console.log("Messages to upload: " + this.beneficiariesMessagesToUpload);
           ipfs.add(this.beneficiariesMessagesToUpload, (err, ipfsHashs) => {
             if (err) {
-              console.error(err);
-            }
-            this.ipfsHashs = ipfsHashs;
-            Legacy.createInstance(
-              this.tPol,
-              this.formatBeneficiaryAddresses(this.beneficiaries),
-              this.formatIpfsHashs(ipfsHashs))
-            .then(instance => {
-              console.log(instance);
+              console.error("Error while uploading your messages to IPFS:"
+                + err);
               this.isLoading = false;
-              this.instance = instance;
-              this.feedbackMsg = "Your messages have been successfully stored.";
-              // TODO: scroll to result
-            }).catch(err => {
-              console.log(err);
-            })
-          })
+              this.contractCreationError = true;
+            } else {
+              this.ipfsHashs = ipfsHashs;
+              Legacy.createInstance(
+                this.tPol,
+                this.formatBeneficiaryAddresses(this.beneficiaries),
+                this.formatIpfsHashs(ipfsHashs))
+              .then(instance => {
+                console.log("Contract successfully deployed: "+ instance);
+                this.isLoading = false;
+                this.instance = instance;
+                this.feedbackMsg = "Your messages have been successfully stored.";
+                // TODO: scroll to result
+              }).catch(err => {
+                this.isLoading = false;
+                this.contractCreationError = true;
+                console.error(err);
+              });
+            }
+          });
         }
       },
       clear () {
         this.$refs.form.reset();
         this.feedbackMsg = '';
         this.beneficiaries = [{
-            ethAddress: "",
-            beneficiaryMessage: "",
-            file: {
-                name: '',
-                path: '',
-            },
-            personalKey: ""
-          }]
+          ethAddress: "",
+          beneficiaryMessage: "",
+          file: {
+              name: '',
+              path: '',
+          },
+          personalKey: ""
+        }];
       },
       getMessagesToUploadFromBeneficiaries: function(beneficiaries){
         let beneficiariesMessages = [];

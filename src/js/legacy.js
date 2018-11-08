@@ -25,7 +25,7 @@ const Legacy = {
         console.log("New contract instance at address: " + instance.address);
         resolve(instance);
       }).catch(err => {
-        console.error("Error while creating a new contract instance: " + err)
+        console.error("Error while creating a new contract instance: " + err);
         reject(err);
       });
     });
