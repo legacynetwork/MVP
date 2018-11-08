@@ -8,7 +8,7 @@
     >
       <v-list dense>
         <template v-for="item in items">
-          <v-list-tile  
+          <v-list-tile
           :key="item.text"
           :to="item.url"
             >
@@ -60,12 +60,12 @@ export default {
                 {
                   icon: 'edit',
                   text: 'Manage my legacy',
-                  url: 'manage-legacy',                    
+                  url: 'manage-legacy',
                 },
                 {
                   icon: 'assignment',
-                  text: 'Reclaim a legacy',
-                  url: 'reclaim-legacy',                    
+                  text: 'Claim a legacy',
+                  url: 'reclaim-legacy',
                 }
                 ],
         miniVariant: false,

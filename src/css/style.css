@@ -26,6 +26,10 @@ h2, h3 {
 p{
     font-size:large;
 }
+
+.fontLarge {
+    font-size:large;
+}
 /* .v-card__title, .v-card__text{
     padding-left: 0px;
 } */
