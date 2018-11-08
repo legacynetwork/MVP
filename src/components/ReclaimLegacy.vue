@@ -2,7 +2,7 @@
   <v-container grid-list-md>
     <v-layout row wrap>
       <v-flex xs12 sm10 offset-sm1 >
-        <h2 class="display-2  mb-3">Reclaim a Legacy</h2>
+        <h2 class="display-2  mb-3">Claim a Legacy</h2>
         <v-divider></v-divider>
         <v-form ref="form">
             <div class="backgroundPrimaryCardColor">
