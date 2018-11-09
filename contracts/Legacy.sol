@@ -31,25 +31,51 @@ contract Legacy is Owned{
     // state variables
     uint256 public tPoL;  // The Proof of Life timer length
     uint256 public tZero; // Indicates when the PoL timer reaches "zero"
-    address[] public beneficiaries; // The beneficiaries of this contract
+    uint8 public k; // minimum number of keepers required to unlock the contract
+    uint8 public n; // total number of keepers
+    address[] public beneficiaries; // Beneficiaries' addresses of this contract
+    address[] public secretKeepers; // The secret keepers of this contract
 
-    // This mapping contains data associated to each beneficiary address.
-    // Currently, the associated data is simply a bytes32 with the IPFS CID of
-    // the message addressed to the beneficiary. The CID must be properly
-    // formatted using a base58 decoder and removing the first two bytes.
-    mapping(address => bytes32) public beneficiaryData;
+    // messageCID corresponds to the IPFS Content IDentifier of the message
+    // addressed to the beneficiary. The CID must be properly formatted using
+    // a base58 decoder and removing the first two bytes (resulting in 32 Bytes)
+    struct beneficiary {
+      bytes32 messageCID;
+      bytes32 keyHash;
+    }
+
+    // secretShare should be set after only after PoL = false
+    struct keeper {
+      bytes32 secretShare;
+      bytes32 secretShareHash; // sha3 of secretShare
+      uint8 secretShareIndex; // 0 <= index < n
+    }
+
+
+    // This mapping contains data associated to each *beneficiary* address.
+    // The associated data is defined in the struct beneficiary.
+    mapping(address => beneficiary) public beneficiaryData;
+
+    // This mapping contains data associated to each *keeper* address.
+    // The associated data is defined in the struct keeper.
+    mapping(address => keeper) public keeperData;
 
     /**
     * @dev contract constructor
     * @param _tPoL The Proof of Life timer length in days
     * @param _beneficiaries An array of beneficiary addresses
-    * @param _messageAdds An array of IPFS CIDs of each beneficiary message
+    * @param _messageCIDs An array of IPFS CIDs of each beneficiary message
     */
-    constructor(uint256 _tPoL, address[] _beneficiaries, bytes32[] _messageAdds) public {
+    constructor(
+        uint256 _tPoL,
+        address[] _beneficiaries,
+        bytes32[] _messageCIDs,
+        bytes32[] _keyHashes
+    ) public {
         if(_tPoL > 0) tPoL = _tPoL * 1 days;
         else tPoL = DEFAULT_T_POL;
         tZero = now + tPoL;
-        addBeneficiaries(_beneficiaries, _messageAdds);
+        addBeneficiaries(_beneficiaries, _messageCIDs, _keyHashes);
     }
 
     /**
@@ -85,7 +111,7 @@ contract Legacy is Owned{
     * @dev Resets the PoL timer. Should only be called by other functions in
     *      this contract with the onlyOwner modifier
     */
-    function resetPoLTimer() internal {
+    function resetPoLTimer() private {
         tZero = tZero + tPoL;
     }
 
@@ -106,6 +132,7 @@ contract Legacy is Owned{
     function claimFunds(address _beneficiary) public {
         require(isBeneficiary(_beneficiary));
         require(!getProofOfLife());
+        // for now, we assume funds are split equitably among all beneficiaries
         _beneficiary.transfer(address(this).balance/beneficiaries.length);
         deleteBeneficiary(_beneficiary);
     }
@@ -113,12 +140,18 @@ contract Legacy is Owned{
     /**
     * @dev Adds new beneficiaries to this contract.
     * @param _beneficiaries An array of beneficiary addresses
-    * @param _messageAdds An array of IPFS CIDs of each beneficiary message
+    * @param _messageCIDs An array of IPFS CIDs of each beneficiary message
+    * @param _keyHashes An array of sha3 of the beneficiaries' decryption keys
     */
-    function addBeneficiaries(address[] _beneficiaries, bytes32[] _messageAdds) public onlyOwner {
+    function addBeneficiaries(
+        address[] _beneficiaries,
+        bytes32[] _messageCIDs,
+        bytes32[] _keyHashes
+    ) public onlyOwner {
         // TODO: check if input data is valid
         for (uint8 i = 0; i < _beneficiaries.length; i++) {
-            beneficiaryData[_beneficiaries[i]].messageCid = _messageCid[i];
+            beneficiaryData[_beneficiaries[i]].messageCID = _messageCIDs[i];
+            beneficiaryData[_beneficiaries[i]].keyHash = _keyHashes[i];
             if(!isBeneficiary(_beneficiaries[i])) beneficiaries.push(_beneficiaries[i]);
         }
         resetPoLTimer();
@@ -159,18 +192,45 @@ contract Legacy is Owned{
         return false;
     }
 
-    function addSecretKeepers(address[] _keepers) public onlyOwner {
-        // TODO: check if input data is valid
+    /**
+    * @dev Saves the secret keepers of the contract
+    */
+    function assignSecretKeepers(
+        address[] _keepers,
+        bytes32[] _secretShareHashes,
+        uint8[] _secretShareIndexes
+    ) public onlyOwner {
+        /*require(
+          secretKeepers.length == 0,
+          "It seems that the keepers of this contract have already been set"
+        );*/
         for (uint8 i = 0; i < _keepers.length; i++) {
-            //keepersData[_keepers[i]].secretShareHash = _[i]; // TODO
+            keeperData[_keepers[i]].secretShareHash = _secretShareHashes[i];
+            keeperData[_keepers[i]].secretShareIndex = _secretShareIndexes[i];
             if(!isKeeper(_keepers[i])) secretKeepers.push(_keepers[i]);
         }
         resetPoLTimer();
     }
 
+    /**
+    * @dev saves the secret share of a keeper
+    * @param _keeper the secret keeper address
+    * @param _secretShare the secret share to be saved
+    */
+    function saveSecretShare(address _keeper, bytes32 _secretShare) public {
+        if (keeperData[_keeper].secretShareHash == keccak256(
+          abi.encodePacked(_secretShare)))
+            keeperData[_keeper].secretShare = _secretShare;
+    }
+
+    /**
+    * @dev Checks if an address is in the state variable array secretKeepers
+    * @param _keeper The keeper address to test
+    * @return True if _keeper is in the array secretKeepers
+    */
     function isKeeper(address _keeper) public view returns(bool) {
-        for(uint8 i = 0; i < secretKeepers.length; i++){
-            if( _keeper == secretKeepers[i]) return true;
+        for (uint8 i = 0; i < secretKeepers.length; i++) {
+            if (_keeper == secretKeepers[i]) return true;
         }
         return false;
     }
@@ -195,13 +255,22 @@ contract Legacy is Owned{
     }
 
     /**
+    * TODO: possibly not required as accessible with default getter
     * @param _beneficiaryAddress The beneficiary address
-    * @return Returns the message CID (bytes32) of the given beneficiary
+    * @return Returns the message CID (bytes32) of the corresponding beneficiary
     */
     function getMessageCID(address _beneficiaryAddress)
         public view returns(bytes32)
     {
-        return beneficiaryData[_beneficiaryAddress];
+        return beneficiaryData[_beneficiaryAddress].messageCID;
+    }
+
+    /**
+    * @dev A simple getter for the state varible array secretKeepers
+    * @return Returns the array of secretKeepers
+    */
+    function getSecretKeepers() public view returns(address[]){
+        return secretKeepers;
     }
 
     function kill() public onlyOwner { selfdestruct(owner); }
