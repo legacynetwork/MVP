@@ -70,12 +70,27 @@ contract Legacy is Owned{
         uint256 _tPoL,
         address[] _beneficiaries,
         bytes32[] _messageCIDs,
-        bytes32[] _keyHashes
+        bytes32[] _keyHashes,
+        address[] _secretKeepers,
+        bytes32[] _secretShareHashes,
+        uint8[] _secretShareIndexes,
+        uint8 _k
     ) public {
+        /*require(
+            0 < _k <= uint8(_secretKeepers.length),
+            'k should be such that 0 < k <= n'
+        );*/ // TODO: fix
         if(_tPoL > 0) tPoL = _tPoL * 1 days;
         else tPoL = DEFAULT_T_POL;
         tZero = now + tPoL;
         addBeneficiaries(_beneficiaries, _messageCIDs, _keyHashes);
+        assignSecretKeepers(
+            _secretKeepers,
+            _secretShareHashes,
+            _secretShareIndexes
+        );
+        k = _k;
+        n = uint8(_secretKeepers.length);
     }
 
     /**
