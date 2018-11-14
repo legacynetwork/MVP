@@ -19,3 +19,7 @@ npm run dev
 # build for production with minification
 npm run build
 ```
+
+MVP link:
+chainimpact.io/legacy/index.html
+(use only with ropsten/rinkeby or other testnet)
