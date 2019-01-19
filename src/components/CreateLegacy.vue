@@ -2,76 +2,121 @@
   <v-container grid-list-md>
     <v-layout row wrap>
       <v-flex xs12 sm10 offset-sm1 >
-        <h2 class="display-2  mb-3">Create a Legacy</h2>
+        <h2 class="display-2  mb-3">Setup your Legacy Contract</h2>
         <v-divider></v-divider>
         <v-form ref="form">
-          <div class="backgroundPrimaryCardColor">
-            <v-card-title class="text-sm-left pb-0" primary-title>
-              <h3 class="display-1 pl-4 mb-3">Your beneficiaries</h3>
-              <v-card-text class="pb-0 pt-0">
-                <v-flex
+
+            <!-- "Your Beneficiaries" section -->
+            <h3 class="display-1 pl-4 my-3">Your beneficiaries</h3>
+              <v-flex
                   v-for="(row, i) in beneficiaries"
                   :key="`A-${i}`"
-                >
-                  <v-card class="backgroundSecondaryCardColor">
-                    <v-card-title class="text-sm-left pb-0" primary-title>
-                      <v-card-text class="pt-0">
-                        <v-layout align-center row wrap>
-                          <v-flex xs12 sm1>
-                            <v-icon size="50">account_box</v-icon>
-                          </v-flex>
-                          <v-flex d-flex xs12 sm4>
-                            <v-text-field
-                              v-model="row.ethAddress"
-                              label="Beneficiary address"
-                              :error-messages="ethAddressErrors"
-                              :counter="42"
-                              dark
-                              :rules="ethAddressRules"
-                            ></v-text-field>
-                            </v-flex>
-                            <v-flex d-flex xs12 sm6>
-                              <v-textarea
-                                v-model="row.beneficiaryMessage"
-                                :error-messages="newMessageErrors"
-                                :rules="newMessageRules"
-                                label="Write a message to your beneficiary..."
-                                auto-grow
-                                rows="1"
-                                dark
-                                required
-                              ></v-textarea>
-                            </v-flex>
-                            <v-layout row wrap class="text-align-center">
-                              <v-flex xs12 sm1 mr-2>
-                                <v-icon size="50">vpn_key</v-icon>
-                              </v-flex>
-                              <v-flex d-flex xs12 sm7>
-                                <v-text-field v-model="row.personalKey"
-                                  label="Your beneficiary's personal decryption key"
-                                ></v-text-field>
-                              </v-flex>
-                            </v-layout>
-                            <v-flex d-flex xs12 sm1>
-                              <v-btn
-                                @click="removeEthAddress(`A-${i}`);"
-                                color="error"
-                                flat
-                              >
-                                <v-icon>clear</v-icon>
-                              </v-btn>
-
-                            </v-flex>
-                          </v-layout>
-                        </v-card-text>
-                      </v-card-title>
-                    </v-card>
-                </v-flex>
-              </v-card-text>
+              >
+                <v-card class="backgroundSecondaryCardColor mb-3">
+                  <v-card-text class="pb-0 pt-0">
+                    <v-layout align-center row wrap>
+                      <v-flex xs12 sm1>
+                        <v-icon size="50">account_box</v-icon>
+                      </v-flex>
+                      <v-flex d-flex xs12 sm4>
+                        <v-text-field
+                          v-model="row.ethAddress"
+                          label="Ethereum address"
+                          :error-messages="ethAddressErrors"
+                          :counter="42"
+                          dark
+                          :rules="ethAddressRules"
+                        ></v-text-field>
+                      </v-flex>
+                      <v-flex d-flex xs12 sm6>
+                        <v-textarea
+                          v-model="row.beneficiaryMessage"
+                          :error-messages="newMessageErrors"
+                          :rules="newMessageRules"
+                          label="Write a message to your beneficiary..."
+                          auto-grow
+                          rows="1"
+                          dark
+                          required
+                        ></v-textarea>
+                      </v-flex>
+                      <v-layout row wrap class="text-align-center">
+                        <v-flex xs12 sm1 mr-2>
+                          <v-icon size="50">vpn_key</v-icon>
+                        </v-flex>
+                        <v-flex d-flex xs12 sm7>
+                          <v-text-field v-model="row.personalKey"
+                            label="Your beneficiary's personal decryption key"
+                          ></v-text-field>
+                        </v-flex>
+                      </v-layout>
+                      <v-flex d-flex xs12 sm1>
+                        <v-btn
+                          @click="removeEthAddress(`A-${i}`);"
+                          color="error"
+                          flat>
+                          <v-icon>clear</v-icon>
+                        </v-btn>
+                      </v-flex>
+                    </v-layout>
+                  </v-card-text>
+                </v-card>
+              </v-flex>
 
               <v-flex text-xs-center text-md-right>
                 <v-btn
                   @click="addBeneficiary"
+                  color="grey"
+                  flat
+                  value="recent"
+                  class="warning"
+                  fab>
+                  <v-icon>add</v-icon>
+                </v-btn>
+              </v-flex>
+
+              <!-- "Your Secret Keepers" section -->
+              <h3 class="display-1 pl-4 mb-3">Your Secret Keepers</h3>
+              <v-flex xs12>
+                <p>You must add at least 3 secret keepers. Be sure
+                to choose people you trust.</p>
+              </v-flex>
+                <v-flex
+                  v-for="(row, i) in secretKeepers"
+                  :key="`A-${i}`"
+                >
+                  <v-card class="backgroundSecondaryCardColor mb-3">
+                    <v-card-text class="pt-0">
+                      <v-layout align-center row wrap>
+                        <v-flex xs12 sm1>
+                          <v-icon size="50">account_box</v-icon>
+                        </v-flex>
+                        <v-flex d-flex xs12 sm4>
+                          <v-text-field
+                            v-model="row.ethAddress"
+                            label="Ethereum address"
+                            :error-messages="ethAddressErrors"
+                            :counter="42"
+                            dark
+                            :rules="ethAddressRules"
+                          ></v-text-field>
+                        </v-flex>
+                        <v-flex d-flex xs12 sm1>
+                          <v-btn
+                            @click="removeSecretKeeper(`A-${i}`);"
+                            color="error"
+                            flat>
+                            <v-icon>clear</v-icon>
+                          </v-btn>
+                        </v-flex>
+                      </v-layout>
+                    </v-card-text>
+                  </v-card>
+                </v-flex>
+
+              <v-flex text-xs-center text-md-right>
+                <v-btn
+                  @click="addSecretKeeper"
                   color="grey"
                   flat
                   value="recent"
@@ -81,8 +126,7 @@
                   <v-icon>add</v-icon>
                 </v-btn>
               </v-flex>
-            </v-card-title>
-          </div>
+
           <div class="backgroundPrimaryCardColor mt-5">
             <v-card-title class="text-sm-left" primary-title >
               <h3 class="display-1 pl-4 mb-3">Contract settings</h3>
@@ -91,31 +135,31 @@
                   <v-card class="backgroundSecondaryCardColor">
                     <v-card-title class="text-sm-left" primary-title>
                       <span class="headline">Proof of Life Timer</span><br>
-                      <v-card-text class="pb-0 pt-0">
-                        <v-layout align-center row wrap>
-                          <v-flex d-flex xs12 sm1>
-                            <v-icon size="50">timelapse</v-icon>
-                          </v-flex>
-                          <v-flex d-flex xs12 sm8>
-                          <p> In order for the contract to know that you are still
-                            alive, you'll need to provide us proof of life regularly by reseting a timer.
-                            Tell us how long (in  days) you want this timer to be (eg. 30).</p>
-                          </v-flex>
-                          <v-flex d-flex xs12 sm3>
-                            <v-text-field
-                              v-model="tPol"
-                              outline
-                              height="100"
-                              label="Time in days"
-                              :error-messages="tPolErrors"
-                              :rules="tPolRules"
-                              dark
-                              class="inputNumber"
-                            ></v-text-field>
-                          </v-flex>
-                        </v-layout>
-                      </v-card-text>
                     </v-card-title>
+                    <v-card-text class="pb-0 pt-0">
+                      <v-layout align-center row wrap>
+                        <v-flex d-flex xs12 sm1>
+                          <v-icon size="50">timelapse</v-icon>
+                        </v-flex>
+                        <v-flex d-flex xs12 sm8>
+                        <p> In order for the contract to know that you are still
+                          alive, you'll need to provide us proof of life regularly by reseting a timer.
+                          Tell us how long (in  days) you want this timer to be (eg. 30).</p>
+                        </v-flex>
+                        <v-flex d-flex xs12 sm3>
+                          <v-text-field
+                            v-model="tPol"
+                            outline
+                            height="100"
+                            label="Time in days"
+                            :error-messages="tPolErrors"
+                            :rules="tPolRules"
+                            dark
+                            class="inputNumber"
+                          ></v-text-field>
+                        </v-flex>
+                      </v-layout>
+                    </v-card-text>
                   </v-card>
                 </v-flex>
               </v-card-text>
@@ -261,7 +305,12 @@
           v => /^(0x){1}[0-9a-fA-F]{40}$/i.test(v) || 'Please input a valid address'
         ],
         contractCreationError: false,
-        contractCreationErrorMsg: "Something went wrong. Please try again later."
+        contractCreationErrorMsg: "Something went wrong. Please try again later.",
+        secretKeepers: [{
+          ethAddress: "",
+          secretShare: "",
+          secretShareHash: ""
+        }]
       }
     },
     created: function () {
@@ -350,7 +399,6 @@
         return ipfsHashsList;
       },
       addBeneficiary: function() {
-        this.feedbackMsg = '';
         this.beneficiaries.push({
           ethAddress: "",
           beneficiaryMessage: "",
@@ -363,10 +411,19 @@
       },
       removeEthAddress: function(index) {
         this.beneficiaries.splice(index, 1);
-        this.feedbackMsg = '';
       },
       generateInfuraUrl: function (CID) {
         return "https://ipfs.infura.io/ipfs/" + this.ipfsHashs[CID].path;
+      },
+      addSecretKeeper: function() {
+        this.secretKeepers.push({
+          ethAddress: "",
+          secretShare: "",
+          secretShareHash: ""
+        });
+      },
+      removeSecretKeeper: function(index) {
+        this.secretKeepers.splice(index,1);
       }
     }
   }
