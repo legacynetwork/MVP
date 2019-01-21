@@ -3,15 +3,15 @@
     <v-layout row wrap>
       <v-flex xs12 sm10 offset-sm1 >
         <h2 class="display-2  mb-3">Setup your Legacy Contract</h2>
-        <v-divider class="mb-3"></v-divider>
+        <v-divider></v-divider>
 
         <v-form ref="form">
 
           <!-- "Your Beneficiaries" section -->
-          <h3 class="display-1 pl-4 my-3">Your beneficiaries</h3>
+          <h3 class="display-1 pl-4 mb-3 mt-5">Your beneficiaries</h3>
           <v-flex
-              v-for="(row, i) in beneficiaries"
-              :key="`A-${i}`"
+            v-for="(row, i) in beneficiaries"
+            :key="`A-${i}`"
           >
             <v-card class="backgroundSecondaryCardColor mb-3">
               <v-card-text class="pb-0 pt-0">
@@ -131,7 +131,6 @@
           <!-- "Contract settings" section -->
           <h3 class="display-1 pl-4 mb-3">Contract settings</h3>
           <v-card class="backgroundSecondaryCardColor mb-3">
-            <v-card-text class="pb-0 pt-0">
               <v-flex d-flex xs12>
                 <v-card-title class="text-sm-left" primary-title>
                   <span class="headline">Proof of Life Timer</span><br>
@@ -161,7 +160,38 @@
                   </v-layout>
                 </v-card-text>
               </v-flex>
-            </v-card-text>
+          </v-card>
+          <v-card class="backgroundSecondaryCardColor mb-3">
+              <v-flex d-flex xs12>
+                <v-card-title class="text-sm-left" primary-title>
+                  <span class="headline">Recovery Settings</span><br>
+                </v-card-title>
+                <v-card-text class="pb-0 pt-0">
+                  <v-layout align-center row wrap>
+                    <v-flex d-flex xs12 sm1>
+                      <v-icon size="50">lock</v-icon>
+                    </v-flex>
+                    <v-flex d-flex xs12 sm8>
+                    <p> Tell us what is the minimum number of secret keepers required
+                      to unlock your Legacy contract. You must choose a number
+                      <code>k</code> such that <code>2 <= k <= n</code>, where
+                      <code>n</code> is the total number of secret keepers.
+                    </p>
+                    </v-flex>
+                    <v-flex d-flex xs12 sm3>
+                      <v-text-field
+                        v-model="k"
+                        outline
+                        height="100"
+                        label="Recovery threshold"
+                        :rules="kRules"
+                        dark
+                        class="inputNumber"
+                      ></v-text-field>
+                    </v-flex>
+                  </v-layout>
+                </v-card-text>
+              </v-flex>
           </v-card>
 
           <v-flex>
@@ -258,6 +288,7 @@
         </v-flex>
       </v-flex>
     </v-layout>
+
   </v-container>
 </template>
 
@@ -309,7 +340,14 @@
           ethAddress: "",
           secretShare: "",
           secretShareHash: ""
-        }]
+        }],
+        k: '',
+        kRules: [
+          v => !!v || 'This field is required',
+          v => /^[0-9]+$/.test(v) || 'A number is required',
+          v => v >= 2 || 'Please choose a number greater or equal than 2',
+          v => v <= this.secretKeepers.length || "Please choose a number smaller or equal than the total number of keepers in your contract"
+        ]
       }
     },
     created: function () {
@@ -360,6 +398,11 @@
               path: '',
           },
           personalKey: ""
+        }];
+        this.secretKeepers = [{
+          ethAddress: "",
+          secretShare: "",
+          secretShareHash: ""
         }];
       },
       getMessagesToUploadFromBeneficiaries: function(beneficiaries){
