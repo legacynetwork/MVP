@@ -71,11 +71,14 @@ contract('Legacy basic test', async (accounts) => {
     let messageAdds = ["0x7d5a99f603f231d53a4f39d1521f98d2e8bb279cf29bebfd0687dc98458e7f89",
     	"0x5d5a29f603f231d53a4f39d1521f98d2e8bb279cf29bebfd0687dc98458e7f80"];
     let beneficiaries = [accounts[1], accounts[2]];
-    await instance.addBeneficiaries(beneficiaries, messageAdds);
-    let newBenefAdd1  = await instance.beneficiaryData.call(accounts[1]);
-    let newBenefAdd2  = await instance.beneficiaryData.call(accounts[2]);
-    assert.equal(newBenefAdd1.valueOf(), messageAdds[0], "Unexpected message address");
-    assert.equal(newBenefAdd2.valueOf(), messageAdds[1], "Unexpected message address");
+    let keyHashes = [web3.sha3("key1"), web3.sha3("key2")];
+    await instance.addBeneficiaries(beneficiaries, messageAdds, keyHashes);
+    let newBenefData1  = await instance.beneficiaryData.call(accounts[1]);
+    let newBenefData2  = await instance.beneficiaryData.call(accounts[2]);
+    assert.equal(newBenefData1[0], messageAdds[0], "Unexpected message address");
+    assert.equal(newBenefData1[1], keyHashes[0], "Unexpected key hash");
+    assert.equal(newBenefData2[0], messageAdds[1], "Unexpected message address");
+    assert.equal(newBenefData2[1], keyHashes[1], "Unexpected key hash");
   });
 
   it("should check beneficiary exists", async () => {
@@ -88,13 +91,48 @@ contract('Legacy basic test', async (accounts) => {
     let instance = await Legacy.deployed();
     await instance.deleteBeneficiary(accounts[1]);
     let isBeneficiary = await instance.isBeneficiary.call(accounts[1]);
-    assert.equal(isBeneficiary, false, "This beneficiary address should no be registered anymore.");
+    assert.equal(isBeneficiary, false,
+      "This beneficiary address should not be registered anymore.");
   });
 
   it("should return owner address", async () => {
     let instance = await Legacy.deployed();
     let owner = await instance.getOwnerAddress();
-    assert.equal(owner.valueOf(), accounts[0], "Contrat owner address does not correspond to accounts[0]");
+    assert.equal(owner.valueOf(), accounts[0],
+      "Contract owner address does not correspond to accounts[0]");
+  });
+
+  it("should be able to add secret keepers", async () => {
+    let instance = await Legacy.deployed();
+    let keepers = [accounts[1], accounts[2], accounts[3]];
+    let secretHashes = [web3.sha3("secret 1"), web3.sha3("secret 2"),
+      web3.sha3("secret 3")];
+    let shareIndexes = [1,2,3]
+    await instance.assignSecretKeepers(keepers, secretHashes, shareIndexes);
+    let keeper1  = await instance.keeperData.call(accounts[1]);
+    // nota: keeper1 has the form
+    // [ '0x0000000000000000000000000000000000000000000000000000000000000000',
+    //   '0x1e930537c18d3fdd5116826440769dd0b91bf028b556eaee9dd96c420b490fc4',
+    //   BigNumber { s: 1, e: 0, c: [ 3 ] } ]
+    // The first field is the secret share, the second, its hash.
+    assert.equal(keeper1[1], web3.sha3("secret 1"), "Unexpected hash value");
+    assert.equal(keeper1[2].toNumber(), 1, "Unexpected secret share index value");
+  });
+
+  it("should be able to save a secret from a given secret keeper", async () => {
+    let instance = await Legacy.deployed();
+    let keeper = accounts[1];
+    // let secretShare = web3.fromAscii("secret 1"); // testing using bytes32
+    let secretShare = "secret 1";
+    let secreShareIndex = 1;
+    await instance.saveSecretShare(
+      keeper,
+      secretShare,
+      {from: keeper});
+    let savedKeeper  = await instance.keeperData.call(keeper);
+    assert.equal(savedKeeper[0], "secret 1", "Unexpected secret share value");
+    assert.equal(savedKeeper[1], web3.sha3("secret 1"), "Unexpected hash value");
+    assert.equal(savedKeeper[2].toNumber(), 1, "Unexpected secret share index value");
   });
 
 });

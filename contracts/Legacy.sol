@@ -46,7 +46,8 @@ contract Legacy is Owned{
 
     // secretShare should be set after only after PoL = false
     struct keeper {
-      bytes32 secretShare;
+      /*bytes32 secretShare;*/
+      string secretShare;
       bytes32 secretShareHash; // sha3 of secretShare
       uint8 secretShareIndex; // 0 <= index < n
     }
@@ -215,13 +216,14 @@ contract Legacy is Owned{
         bytes32[] _secretShareHashes,
         uint8[] _secretShareIndexes
     ) public onlyOwner {
+        // TODO: check the minimum number of keepers required by the algorithm
         /*require(
-          secretKeepers.length == 0,
-          "It seems that the keepers of this contract have already been set"
+          _keepers.length > X,
+          "At least X secret keepers are required"
         );*/
         for (uint8 i = 0; i < _keepers.length; i++) {
             keeperData[_keepers[i]].secretShareHash = _secretShareHashes[i];
-            keeperData[_keepers[i]].secretShareIndex = _secretShareIndexes[i];
+            keeperData[_keepers[i]].secretShareIndex = uint8(_secretShareIndexes[i]);
             if(!isKeeper(_keepers[i])) secretKeepers.push(_keepers[i]);
         }
         resetPoLTimer();
@@ -232,7 +234,11 @@ contract Legacy is Owned{
     * @param _keeper the secret keeper address
     * @param _secretShare the secret share to be saved
     */
-    function saveSecretShare(address _keeper, bytes32 _secretShare) public {
+    function saveSecretShare(address _keeper, string _secretShare) public {
+        require(
+            isKeeper(msg.sender),
+            "Only a secret keeper can call this function."
+        );
         if (keeperData[_keeper].secretShareHash == keccak256(
           abi.encodePacked(_secretShare)))
             keeperData[_keeper].secretShare = _secretShare;
