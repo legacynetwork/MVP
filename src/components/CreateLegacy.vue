@@ -79,8 +79,8 @@
           <!-- "Your Secret Keepers" section -->
           <h3 class="display-1 pl-4 mb-3">Your Secret Keepers</h3>
           <v-flex xs12>
-            <p>You must add at least 3 secret keepers. Be sure
-            to choose people you trust.</p>
+            <p>You must add at least two secret keepers. We recommend three or
+              more. Be sure to choose people you trust.</p>
           </v-flex>
             <v-flex
               v-for="(row, i) in secretKeepers"
@@ -129,7 +129,7 @@
           </v-flex>
 
           <!-- "Contract settings" section -->
-          <h3 class="display-1 pl-4 mb-3">Contract settings</h3>
+          <h3 class="display-1 pl-4 mb-2">Contract settings</h3>
           <ContractParameterCard
             label="Time in days"
             headline="Proof of Life Timer"
@@ -269,6 +269,7 @@
   import Legacy from '@/js/legacy'
   import ipfs from "@/js/ipfs"
   import util from "@/js/util"
+  import shamir from "@/js/shamir"
   import ContractParameterCard from '@/components/ContractParameterCard'
 
   export default {
@@ -349,9 +350,13 @@
               this.ipfsHashs = ipfsHashs;
               Legacy.createInstance(
                 this.tPol,
-                this.formatBeneficiaryAddresses(this.beneficiaries),
-                this.formatIpfsHashs(ipfsHashs))
-              .then(instance => {
+                this.buildAddressArray(this.beneficiaries),
+                this.buildCidArray(ipfsHashs),
+                this.buildKeyHashArray(),
+                this.buildAddressArray(this.secretKeepers),
+                this.buildShareHashArray(),
+                this.k
+              ).then(instance => {
                 console.log("Contract successfully deployed: "+ instance);
                 this.isLoading = false;
                 this.instance = instance;
@@ -403,14 +408,14 @@
         }
         return beneficiariesMessages;
       },
-      formatBeneficiaryAddresses: function(beneficiaries) {
-        var beneficiariesAddress = [];
-        for(var i=0; i < beneficiaries.length; i++ ){
-          beneficiariesAddress.push(beneficiaries[i].ethAddress);
+      buildAddressArray: function(arr) {
+        var addressArr = [];
+        for(var i=0; i < arr.length; i++ ){
+          addressArr.push(arr[i].ethAddress);
         }
-        return beneficiariesAddress;
+        return addressArr;
       },
-      formatIpfsHashs: function(ipfsHashs) {
+      buildCidArray: function (ipfsHashs) {
         console.log("IPFS hash:", ipfsHashs);
         var ipfsHashsList = [];
         for(var i=0; i < ipfsHashs.length; i++ ){
@@ -419,8 +424,25 @@
         }
         return ipfsHashsList;
       },
-      getSecretShares: function() {
-        n = this.secretKeepers.length;
+      buildKeyHashArray: function () {
+        var arr = [];
+        for(var i=0; i<this.beneficiaries.length; i++){
+          arr.push(web3.sha3(this.beneficiaries[i].personalKey));
+        }
+        return arr;
+      },
+      buildShareHashArray: function () {
+        let nShares = parseInt(this.secretKeepers.length);
+        let threshold = parseInt(this.k);
+        let hexSecret = Buffer.from(this.secretPhrase).toString('hex');
+        // let checksum = crypto.createHash('sha256').update(hexSecret).digest('hex').substr(56);
+        // let checkedHexSecret = hexSecret + checksum;
+        let secretShares = shamir.generateShares(hexSecret, nShares, threshold);
+        var arr = []
+        for(var i = 0; i < nShares; i++) {
+          arr.push(web3.sha3(secretShares[i]));
+        }
+        return arr;
       },
       addBeneficiary: function() {
         this.beneficiaries.push({

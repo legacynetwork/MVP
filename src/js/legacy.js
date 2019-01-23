@@ -11,7 +11,15 @@ const Legacy = {
     this.contract.setProvider(window.web3.currentProvider);
   },
 
-  createInstance: function (tPol, beneficiaryAddresses, beneficiaryMessages) {
+  createInstance: function (
+    tPol,
+    beneficiaryAddresses,
+    beneficiaryMessages,
+    benefKeyHashes,
+    keeperAddresses,
+    keeperShareHahes,
+    k
+  ) {
     let self = this;
 
     return new Promise(function (resolve, reject) {
@@ -19,6 +27,10 @@ const Legacy = {
         tPol,
         beneficiaryAddresses,
         beneficiaryMessages,
+        benefKeyHashes,
+        keeperAddresses,
+        keeperShareHahes,
+        k,
         {from: window.web3.eth.accounts[0], gas: 3000000}
       ).then(instance => {
         self.instance = instance;
