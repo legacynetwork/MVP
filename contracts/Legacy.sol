@@ -74,7 +74,6 @@ contract Legacy is Owned{
         bytes32[] _keyHashes,
         address[] _secretKeepers,
         bytes32[] _secretShareHashes,
-        uint8[] _secretShareIndexes,
         uint8 _k
     ) public {
         /*require(
@@ -87,8 +86,7 @@ contract Legacy is Owned{
         addBeneficiaries(_beneficiaries, _messageCIDs, _keyHashes);
         assignSecretKeepers(
             _secretKeepers,
-            _secretShareHashes,
-            _secretShareIndexes
+            _secretShareHashes
         );
         k = _k;
         n = uint8(_secretKeepers.length);
@@ -209,12 +207,12 @@ contract Legacy is Owned{
     }
 
     /**
-    * @dev Saves the secret keepers of the contract
+    * @dev Saves the secret keepers of the contract. We assume the shares are
+    * given in order.
     */
     function assignSecretKeepers(
         address[] _keepers,
-        bytes32[] _secretShareHashes,
-        uint8[] _secretShareIndexes
+        bytes32[] _secretShareHashes
     ) public onlyOwner {
         // TODO: check the minimum number of keepers required by the algorithm
         /*require(
@@ -223,7 +221,8 @@ contract Legacy is Owned{
         );*/
         for (uint8 i = 0; i < _keepers.length; i++) {
             keeperData[_keepers[i]].secretShareHash = _secretShareHashes[i];
-            keeperData[_keepers[i]].secretShareIndex = uint8(_secretShareIndexes[i]);
+            /*keeperData[_keepers[i]].secretShareIndex = uint8(_secretShareIndexes[i]);*/
+            keeperData[_keepers[i]].secretShareIndex = i;
             if(!isKeeper(_keepers[i])) secretKeepers.push(_keepers[i]);
         }
         resetPoLTimer();

@@ -107,8 +107,7 @@ contract('Legacy basic test', async (accounts) => {
     let keepers = [accounts[1], accounts[2], accounts[3]];
     let secretHashes = [web3.sha3("secret 1"), web3.sha3("secret 2"),
       web3.sha3("secret 3")];
-    let shareIndexes = [1,2,3]
-    await instance.assignSecretKeepers(keepers, secretHashes, shareIndexes);
+    await instance.assignSecretKeepers(keepers, secretHashes);
     let keeper1  = await instance.keeperData.call(accounts[1]);
     // nota: keeper1 has the form
     // [ '0x0000000000000000000000000000000000000000000000000000000000000000',
@@ -116,7 +115,7 @@ contract('Legacy basic test', async (accounts) => {
     //   BigNumber { s: 1, e: 0, c: [ 3 ] } ]
     // The first field is the secret share, the second, its hash.
     assert.equal(keeper1[1], web3.sha3("secret 1"), "Unexpected hash value");
-    assert.equal(keeper1[2].toNumber(), 1, "Unexpected secret share index value");
+    assert.equal(keeper1[2].toNumber(), 0, "Unexpected secret share index value");
   });
 
   it("should be able to save a secret from a given secret keeper", async () => {
@@ -124,7 +123,6 @@ contract('Legacy basic test', async (accounts) => {
     let keeper = accounts[1];
     // let secretShare = web3.fromAscii("secret 1"); // testing using bytes32
     let secretShare = "secret 1";
-    let secreShareIndex = 1;
     await instance.saveSecretShare(
       keeper,
       secretShare,
@@ -132,7 +130,7 @@ contract('Legacy basic test', async (accounts) => {
     let savedKeeper  = await instance.keeperData.call(keeper);
     assert.equal(savedKeeper[0], "secret 1", "Unexpected secret share value");
     assert.equal(savedKeeper[1], web3.sha3("secret 1"), "Unexpected hash value");
-    assert.equal(savedKeeper[2].toNumber(), 1, "Unexpected secret share index value");
+    assert.equal(savedKeeper[2].toNumber(), 0, "Unexpected secret share index value");
   });
 
 });
