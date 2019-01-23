@@ -53,7 +53,7 @@
                   </v-layout>
                   <v-flex d-flex xs12 sm1>
                     <v-btn
-                      @click="removeEthAddress(`A-${i}`);"
+                      @click="removeEthAddress(`${i}`);"
                       color="error"
                       flat>
                       <v-icon>clear</v-icon>
@@ -84,7 +84,7 @@
           </v-flex>
             <v-flex
               v-for="(row, i) in secretKeepers"
-              :key="`A-${i}`"
+              :key="`K-${i}`"
             >
               <v-card class="backgroundSecondaryCardColor mb-3">
                 <v-card-text class="pt-0">
@@ -104,7 +104,7 @@
                     </v-flex>
                     <v-flex d-flex xs12 sm1 offset-sm6>
                       <v-btn
-                        @click="removeSecretKeeper(`A-${i}`);"
+                        @click="removeSecretKeeper(`${i}`);"
                         color="error"
                         flat>
                         <v-icon>clear</v-icon>
@@ -130,69 +130,42 @@
 
           <!-- "Contract settings" section -->
           <h3 class="display-1 pl-4 mb-3">Contract settings</h3>
-          <v-card class="backgroundSecondaryCardColor mb-3">
-              <v-flex d-flex xs12>
-                <v-card-title class="text-sm-left" primary-title>
-                  <span class="headline">Proof of Life Timer</span><br>
-                </v-card-title>
-                <v-card-text class="pb-0 pt-0">
-                  <v-layout align-center row wrap>
-                    <v-flex d-flex xs12 sm1>
-                      <v-icon size="50">timelapse</v-icon>
-                    </v-flex>
-                    <v-flex d-flex xs12 sm8>
-                    <p> In order for the contract to know that you are still
-                      alive, you'll need to provide us proof of life regularly by reseting a timer.
-                      Tell us how long (in  days) you want this timer to be (eg. 30).</p>
-                    </v-flex>
-                    <v-flex d-flex xs12 sm3>
-                      <v-text-field
-                        v-model="tPol"
-                        outline
-                        height="100"
-                        label="Time in days"
-                        :error-messages="tPolErrors"
-                        :rules="tPolRules"
-                        dark
-                        class="inputNumber"
-                      ></v-text-field>
-                    </v-flex>
-                  </v-layout>
-                </v-card-text>
-              </v-flex>
-          </v-card>
-          <v-card class="backgroundSecondaryCardColor mb-3">
-              <v-flex d-flex xs12>
-                <v-card-title class="text-sm-left" primary-title>
-                  <span class="headline">Recovery Settings</span><br>
-                </v-card-title>
-                <v-card-text class="pb-0 pt-0">
-                  <v-layout align-center row wrap>
-                    <v-flex d-flex xs12 sm1>
-                      <v-icon size="50">lock</v-icon>
-                    </v-flex>
-                    <v-flex d-flex xs12 sm8>
-                    <p> Tell us what is the minimum number of secret keepers required
-                      to unlock your Legacy contract. You must choose a number
-                      <code>k</code> such that <code>2 <= k <= n</code>, where
-                      <code>n</code> is the total number of secret keepers.
-                    </p>
-                    </v-flex>
-                    <v-flex d-flex xs12 sm3>
-                      <v-text-field
-                        v-model="k"
-                        outline
-                        height="100"
-                        label="Recovery threshold"
-                        :rules="kRules"
-                        dark
-                        class="inputNumber"
-                      ></v-text-field>
-                    </v-flex>
-                  </v-layout>
-                </v-card-text>
-              </v-flex>
-          </v-card>
+          <ContractParameterCard
+            label="Time in days"
+            headline="Proof of Life Timer"
+            helperText="In order for the contract to know that you are still
+              alive, you'll need to provide us proof of life regularly by
+              reseting a timer. Tell us how long (in  days) you want this timer
+              to be (eg. 30)."
+            icon="timelapse"
+            v-model="tPol"
+            inputType="inputNumber"
+            :rules="tPolRules"
+          />
+
+          <ContractParameterCard
+            label="Recovery threshold"
+            headline="Recovery Threshold"
+            helperText="Tell us what is the minimum number of secret keepers
+            required to unlock your Legacy contract. You must choose a number
+            <code>k</code> such that <code>2 <= k <= n</code>, where
+            <code>n</code> is the total number of secret keepers."
+            icon="lock"
+            v-model="k"
+            inputType="inputNumber"
+            :rules="kRules"
+          />
+
+          <ContractParameterCard
+            label="Your secret phrase"
+            headline="Your Secret Phrase"
+            helperText="Insert a random secret phrase, it will be used to
+                  generate the shared keys that you will then distribute
+                  to your secret keepers. We recommend to destroy it or keep
+                  it to yourself one we are done."
+            icon="vpn_key"
+            v-model="secretPhrase"
+          />
 
           <v-flex>
             <v-alert
@@ -296,8 +269,9 @@
   import Legacy from '@/js/legacy'
   import ipfs from "@/js/ipfs"
   import util from "@/js/util"
+  import ContractParameterCard from '@/components/ContractParameterCard'
 
-   export default {
+  export default {
     data () {
       return {
         tPol: '',
@@ -341,20 +315,25 @@
           secretShare: "",
           secretShareHash: ""
         }],
-        k: '',
+        k: "",
         kRules: [
           v => !!v || 'This field is required',
           v => /^[0-9]+$/.test(v) || 'A number is required',
           v => v >= 2 || 'Please choose a number greater or equal than 2',
           v => v <= this.secretKeepers.length || "Please choose a number smaller or equal than the total number of keepers in your contract"
-        ]
+        ],
+        secretPhrase: ""
       }
     },
     created: function () {
       Legacy.init();
     },
+    components: {
+      ContractParameterCard
+    },
     methods: {
       submit () {
+        console.log(this.secretPhrase);
         if (this.$refs.form.validate()) {
           console.log("Setting up contract...");
           this.isLoading = true;
@@ -440,6 +419,9 @@
         }
         return ipfsHashsList;
       },
+      getSecretShares: function() {
+        n = this.secretKeepers.length;
+      },
       addBeneficiary: function() {
         this.beneficiaries.push({
           ethAddress: "",
@@ -494,8 +476,5 @@
 .fileContainer [type=file] {
     cursor: pointer;
 }
-.v-input.inputNumber input{
-  font-size:50px;
-  max-height: 100px;
-}
+
 </style>
