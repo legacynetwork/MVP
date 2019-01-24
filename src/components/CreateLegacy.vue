@@ -165,6 +165,7 @@
                   it to yourself one we are done."
             icon="vpn_key"
             v-model="secretPhrase"
+            :rules="secretRules"
           />
 
           <v-flex>
@@ -323,7 +324,10 @@
           v => v >= 2 || 'Please choose a number greater or equal than 2',
           v => v <= this.secretKeepers.length || "Please choose a number smaller or equal than the total number of keepers in your contract"
         ],
-        secretPhrase: ""
+        secretPhrase: "",
+        secretRules: [
+          v => !!v || 'This field is required'
+        ]
       }
     },
     created: function () {
