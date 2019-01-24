@@ -23,7 +23,6 @@
                     <v-text-field
                       v-model="row.ethAddress"
                       label="Ethereum address"
-                      :error-messages="ethAddressErrors"
                       :counter="42"
                       dark
                       :rules="ethAddressRules"
@@ -32,7 +31,6 @@
                   <v-flex d-flex xs12 sm6>
                     <v-textarea
                       v-model="row.beneficiaryMessage"
-                      :error-messages="newMessageErrors"
                       :rules="newMessageRules"
                       label="Write a message to your beneficiary..."
                       auto-grow
@@ -46,8 +44,11 @@
                       <v-icon size="50">vpn_key</v-icon>
                     </v-flex>
                     <v-flex d-flex xs12 sm7>
-                      <v-text-field v-model="row.personalKey"
+                      <v-text-field
+                        v-model="row.personalKey"
                         label="Your beneficiary's personal decryption key"
+                        required
+                        :rules="secretRules"
                       ></v-text-field>
                     </v-flex>
                   </v-layout>
@@ -96,7 +97,6 @@
                       <v-text-field
                         v-model="row.ethAddress"
                         label="Ethereum address"
-                        :error-messages="ethAddressErrors"
                         :counter="42"
                         dark
                         :rules="ethAddressRules"
@@ -277,9 +277,6 @@
     data () {
       return {
         tPol: '',
-        newMessageErrors: '',
-        ethAddressErrors: '',
-        tPolErrors: '',
         instance: {},
         isLoading: false,
         beneficiaries: [{
