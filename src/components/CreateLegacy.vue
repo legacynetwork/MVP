@@ -227,7 +227,7 @@
           </v-flex>
           <v-flex
             v-for="(beneficiary, i) in beneficiaries"
-            :key=i
+            :key="i"
           >
             <v-card color="#1262B2">
               <v-card-title class="text-sm-left" primary-title>
@@ -254,6 +254,34 @@
                   <v-flex xs12 md7 offset-md5 text-xs-left>
                     <v-icon size="30" class="mr-1">vpn_key</v-icon>
                     Personal decryption key: <i>{{beneficiary.personalKey}}</i>
+                  </v-flex>
+                </v-layout>
+              </v-card-text>
+            </v-card>
+          </v-flex>
+          <v-flex
+            v-for="(keeper, j) in secretKeepers"
+            :key="j"
+          >
+            <v-card color="#1262B2">
+              <v-card-title class="text-sm-left" primary-title>
+                <v-layout row wrap align-center>
+                  <v-flex d-flex xs12 md1>
+                    <v-icon size="50">account_box</v-icon>
+                  </v-flex>
+                  <v-flex d-flex xs12 md4 class="headline">
+                    Secret Keeper {{j+1}}:
+                  </v-flex>
+                  <v-flex d-flex xs12 md7 class="fontLarge">
+                    {{keeper.ethAddress}}
+                  </v-flex>
+                </v-layout>
+              </v-card-title>
+              <v-card-text class="pt-0">
+                <v-layout row wrap align-center class="fontLarge">
+                  <v-flex xs12 md7 offset-md5 text-xs-left>
+                    <v-icon size="30" class="mr-1">vpn_key</v-icon>
+                    Secret share: <i>{{keeper.secretShare}}</i>
                   </v-flex>
                 </v-layout>
               </v-card-text>
@@ -335,7 +363,6 @@
     },
     methods: {
       submit () {
-        console.log(this.secretPhrase);
         if (this.$refs.form.validate()) {
           console.log("Setting up contract...");
           this.isLoading = true;
@@ -396,16 +423,19 @@
         let key = "";
         let CryptoJS = require("crypto-js");
         for(var i=0; i < beneficiaries.length; i++ ){
-          var messageTimeStamp = "\n\nMessage created: " + new Date() + " " + i;
+          var messageTimeStamp = "\n\nMessage timestamp: " + new Date() + " " + i;
           msgToUpload =  beneficiaries[i].beneficiaryMessage + messageTimeStamp;
           if(beneficiaries[i].personalKey) {
             key = beneficiaries[i].personalKey;
+            // first encrytion layer
             msgToUpload =  CryptoJS.AES.encrypt(msgToUpload, key).toString();
+            // second encryption layer
+            msgToUpload =  CryptoJS.AES.encrypt(msgToUpload, this.secretPhrase).toString();
             console.log("msg to upload:" +  msgToUpload);
           }
           beneficiariesMessages.push({
             content: Buffer.from(msgToUpload)
-          })
+          });
         }
         return beneficiariesMessages;
       },
@@ -442,6 +472,7 @@
         var arr = []
         for(var i = 0; i < nShares; i++) {
           arr.push(web3.sha3(secretShares[i]));
+          this.secretKeepers[i].secretShare = secretShares[i];
         }
         return arr;
       },
