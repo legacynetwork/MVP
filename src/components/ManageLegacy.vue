@@ -233,6 +233,8 @@
         }
       },
       ping: function(){
+        // TODO: fix. Alert should be shown after transaction is confirmed
+        // by the user.
         Legacy.giveProofOfLife();
         Legacy.getPoLTimerLen().then(tPol => {
           this.tPol = tPol/24/60/60

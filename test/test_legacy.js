@@ -1,20 +1,79 @@
 const Legacy = artifacts.require("Legacy");
 
+// heads up: this testing script is based on the initial state given by the
+// deployment script. An initial tPoL=0 is required to test methods that
+// can only be called once the PoL timer reaches zero.
 
 contract('Legacy basic test', async (accounts) => {
 
-  it("should check PoL be true", async () => {
+  // start with an "open" contract
+  it("should check PoL be false", async () => {
     let instance = await Legacy.deployed();
     let proof_of_life = await instance.getProofOfLife.call();
-    assert.equal(proof_of_life.valueOf(), true);
+    assert.equal(proof_of_life.valueOf(), false);
   });
 
-  it("should check PoL timer length be equivalent to 90 days (as set in deployment)", async () => {
+  it("should check PoL timer length be equivalent to number set in deployment", async () => {
     let instance = await Legacy.deployed();
     let tPoL = await instance.tPoL();
-    let expected_tPoL = 90 * 24 * 3600;
+    let expected_tPoL = 0 * 24 * 3600;
     assert.equal(tPoL.valueOf(), expected_tPoL);
   });
+
+  it("should be able to add secret keepers", async () => {
+    let instance = await Legacy.deployed();
+    let keepers = [accounts[1], accounts[2], accounts[3]];
+    let secretHashes = [web3.sha3("secret 1"), web3.sha3("secret 2"),
+    web3.sha3("secret 3")];
+    await instance.assignSecretKeepers(keepers, secretHashes);
+    let keeper1  = await instance.keeperData.call(accounts[1]);
+    // nota: keeper1 has the form
+    // [ '0x0000000000000000000000000000000000000000000000000000000000000000',
+    //   '0x1e930537c18d3fdd5116826440769dd0b91bf028b556eaee9dd96c420b490fc4',
+    //   BigNumber { s: 1, e: 0, c: [ 3 ] } ]
+    // The first field is the secret share, the second, its hash.
+    assert.equal(keeper1[1], web3.sha3("secret 1"), "Unexpected hash value");
+    assert.equal(keeper1[2].toNumber(), 0, "Unexpected secret share index value");
+  });
+
+  // next test requires an expired PoL timer
+  it("should be able to save a secret from a given secret keeper", async () => {
+    let instance = await Legacy.deployed();
+    // let now = web3.eth.getBlock(web3.eth.blockNumber).timestamp;
+    // console.log(now);
+    let keeper = accounts[1];
+    // let secretShare = web3.fromAscii("secret 1"); // testing using bytes32
+    let secretShare = "secret 1";
+    await instance.saveSecretShare(
+      keeper,
+      secretShare,
+      {from: keeper}
+    );
+    let savedKeeper  = await instance.keeperData.call(keeper);
+    assert.equal(savedKeeper[0], "secret 1", "Unexpected secret share value");
+    assert.equal(savedKeeper[1], web3.sha3("secret 1"), "Unexpected hash value");
+    assert.equal(savedKeeper[2].toNumber(), 0, "Unexpected secret share index value");
+  });
+
+  it("should be able to claim funds", async () => {
+    let instance = await Legacy.deployed();
+    try {
+      await instance.claimFunds(accounts[0]);
+      assert.fail("Transaction should have thrown an error");
+    }
+    catch (err) {
+      assert.include(err.message, "revert", "The error message should contain 'revert'");
+    }
+  });
+
+  // now we set a reasonable PoL timer length
+  it("should check PoL timer length be correctly set", async () => {
+      let instance = await Legacy.deployed();
+      await instance.setPoLTimerLength(120); // sets tPoL to 120 days
+      let expected_tPoL = 120 * 24 * 3600;
+      let tPoLAfter = await instance.tPoL();
+      assert.equal(tPoLAfter.toNumber(), expected_tPoL);
+    });
 
   it("should check PoL timer reset", async () => {
     let instance = await Legacy.deployed();
@@ -24,14 +83,6 @@ contract('Legacy basic test', async (accounts) => {
     await instance.giveProofOfLife();
     let tAfter = await instance.tZero();
     assert.equal(tAfter.toNumber(), expected_tAfter);
-  });
-
-  it("should check PoL timer length be correctly set", async () => {
-    let instance = await Legacy.deployed();
-    await instance.setPoLTimerLength(120); // sets tPoL to 120 days
-    let expected_tPoL = 120 * 24 * 3600;
-    let tPoLAfter = await instance.tPoL();
-    assert.equal(tPoLAfter.toNumber(), expected_tPoL);
   });
 
   it("should not be able to claim funds", async () => {
@@ -45,7 +96,6 @@ contract('Legacy basic test', async (accounts) => {
     }
   });
 
-  // TODO: check claimFunds() when ProofOfLife = false (ie, when funds can actually be claimed)
 
   it("should be able to receive ether", async () => {
     let instance = await Legacy.deployed();
@@ -100,37 +150,6 @@ contract('Legacy basic test', async (accounts) => {
     let owner = await instance.getOwnerAddress();
     assert.equal(owner.valueOf(), accounts[0],
       "Contract owner address does not correspond to accounts[0]");
-  });
-
-  it("should be able to add secret keepers", async () => {
-    let instance = await Legacy.deployed();
-    let keepers = [accounts[1], accounts[2], accounts[3]];
-    let secretHashes = [web3.sha3("secret 1"), web3.sha3("secret 2"),
-      web3.sha3("secret 3")];
-    await instance.assignSecretKeepers(keepers, secretHashes);
-    let keeper1  = await instance.keeperData.call(accounts[1]);
-    // nota: keeper1 has the form
-    // [ '0x0000000000000000000000000000000000000000000000000000000000000000',
-    //   '0x1e930537c18d3fdd5116826440769dd0b91bf028b556eaee9dd96c420b490fc4',
-    //   BigNumber { s: 1, e: 0, c: [ 3 ] } ]
-    // The first field is the secret share, the second, its hash.
-    assert.equal(keeper1[1], web3.sha3("secret 1"), "Unexpected hash value");
-    assert.equal(keeper1[2].toNumber(), 0, "Unexpected secret share index value");
-  });
-
-  it("should be able to save a secret from a given secret keeper", async () => {
-    let instance = await Legacy.deployed();
-    let keeper = accounts[1];
-    // let secretShare = web3.fromAscii("secret 1"); // testing using bytes32
-    let secretShare = "secret 1";
-    await instance.saveSecretShare(
-      keeper,
-      secretShare,
-      {from: keeper});
-    let savedKeeper  = await instance.keeperData.call(keeper);
-    assert.equal(savedKeeper[0], "secret 1", "Unexpected secret share value");
-    assert.equal(savedKeeper[1], web3.sha3("secret 1"), "Unexpected hash value");
-    assert.equal(savedKeeper[2].toNumber(), 0, "Unexpected secret share index value");
   });
 
 });

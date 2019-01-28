@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import CreateLegacy from '@/components/CreateLegacy'
 import ManageLegacy from '@/components/ManageLegacy'
 import ReclaimLegacy from '@/components/ReclaimLegacy'
+import SecretKeeper from '@/components/SecretKeeper'
 
 Vue.use(Router)
 
@@ -27,6 +28,11 @@ export default new Router({
       path: '/reclaim-legacy',
       name: 'reclaimLegacy',
       component: ReclaimLegacy
+    },
+    {
+      path: '/secret-keeper',
+      name: 'secretKeeper',
+      component: SecretKeeper
     }
   ]
 })

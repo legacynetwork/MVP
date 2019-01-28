@@ -66,6 +66,11 @@ export default {
                   icon: 'assignment',
                   text: 'Claim a legacy',
                   url: 'reclaim-legacy',
+                },
+                {
+                  icon: 'vpn_key',
+                  text: 'Secret keeper?',
+                  url: 'secret-keeper',
                 }
                 ],
         miniVariant: false,

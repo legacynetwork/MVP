@@ -27,6 +27,7 @@ contract Legacy is Owned{
 
     // constant parameters
     uint256 constant DEFAULT_T_POL = 90 * 1 days;
+    uint256 constant MIN_T_POL = 0;  // TODO: define value >> 0
 
     // state variables
     uint256 public tPoL;  // The Proof of Life timer length
@@ -76,11 +77,15 @@ contract Legacy is Owned{
         bytes32[] _secretShareHashes,
         uint8 _k
     ) public {
-        /*require(
-            0 < _k <= uint8(_secretKeepers.length),
-            'k should be such that 0 < k <= n'
-        );*/ // TODO: fix
-        if(_tPoL > 0) tPoL = _tPoL * 1 days;
+        require(
+            uint8(2) <= _k,
+            'k must be greater or equal than 2'
+        );
+        require(
+            _k <= uint8(_secretKeepers.length),
+            'k must be smaller or equal than n'
+        );
+        if(_tPoL >= MIN_T_POL) tPoL = _tPoL * 1 days;
         else tPoL = DEFAULT_T_POL;
         tZero = now + tPoL;
         addBeneficiaries(_beneficiaries, _messageCIDs, _keyHashes);
@@ -117,7 +122,7 @@ contract Legacy is Owned{
     @return True if the PoL timer hasn't reached tZero
     */
     function getProofOfLife() public view returns(bool) {
-        if (now > tZero) return false;
+        if (now >= tZero) return false;
         else return true;
     }
 
@@ -134,7 +139,7 @@ contract Legacy is Owned{
     * @param _tPoL The Proof of Life timer length in days
     */
     function setPoLTimerLength(uint256 _tPoL) public onlyOwner {
-        if(_tPoL > 0) tPoL = _tPoL * 1 days;
+        if(_tPoL >= MIN_T_POL) tPoL = _tPoL * 1 days;
         resetPoLTimer();
     }
 
@@ -214,11 +219,10 @@ contract Legacy is Owned{
         address[] _keepers,
         bytes32[] _secretShareHashes
     ) public onlyOwner {
-        // TODO: check the minimum number of keepers required by the algorithm
-        /*require(
-          _keepers.length > X,
-          "At least X secret keepers are required"
-        );*/
+        require(
+          _keepers.length >= 2,
+          "At least 2 secret keepers must be provided"
+        );
         for (uint8 i = 0; i < _keepers.length; i++) {
             keeperData[_keepers[i]].secretShareHash = _secretShareHashes[i];
             /*keeperData[_keepers[i]].secretShareIndex = uint8(_secretShareIndexes[i]);*/
@@ -237,6 +241,10 @@ contract Legacy is Owned{
         require(
             isKeeper(msg.sender),
             "Only a secret keeper can call this function."
+        );
+        require(
+            !getProofOfLife(),
+            "PoL timer has not reached zero yet."
         );
         if (keeperData[_keeper].secretShareHash == keccak256(
           abi.encodePacked(_secretShare)))

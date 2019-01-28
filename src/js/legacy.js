@@ -49,7 +49,6 @@ const Legacy = {
     return new Promise(function (resolve, reject) {
       self.contract.at(smartContractAddress).then(instance => {
         self.instance = instance;
-        console.log("Contract found at address: " + instance.address);
         instance.userAddress = web3.eth.accounts[0];
         resolve(instance);
       }).catch(err => {
@@ -221,7 +220,35 @@ const Legacy = {
         reject(err);
       });
     });
+  },
+
+  isKeeper: function (userAddress) {
+    let self = this;
+    return new Promise((resolve, reject) => {
+      self.instance.isKeeper(userAddress)
+      .then(isKeeper => {
+        resolve(isKeeper);
+      }).catch(err => {
+        reject(err);
+      });
+    });
+  },
+
+  saveSecretShare: function (keeperAdd, secretShare) {
+    let self = this;
+    return new Promise((resolve, reject) => {
+      self.instance.saveSecretShare(
+        keeperAdd,
+        secretShare,
+        {from: window.web3.eth.accounts[0]}
+      )
+      .then(() => {resolve();})
+      .catch(err => {
+        reject(err);
+      });
+    });
   }
+
 }
 
 export default Legacy
