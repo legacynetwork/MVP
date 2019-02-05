@@ -52,7 +52,7 @@ const Legacy = {
         instance.userAddress = web3.eth.accounts[0];
         resolve(instance);
       }).catch(err => {
-        console.error("An error ocurred while retrieving the contract: " + err);
+        console.error(err);
         reject(err);
       });
     });
