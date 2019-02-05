@@ -145,7 +145,9 @@ const Legacy = {
     return new Promise((resolve, reject) => {
       self.instance.giveProofOfLife(
         {from: window.web3.eth.accounts[0]}
-      ).catch(err => {
+      )
+      .then(() => {resolve();})
+      .catch(err => {
         reject(err);
       });
     });
@@ -158,7 +160,9 @@ const Legacy = {
       self.instance.setPoLTimerLength(
         tPol,
         {from: window.web3.eth.accounts[0]}
-      ).catch(err => {
+      )
+      .then(() => {resolve();})
+      .catch(err => {
         reject(err);
       });
     });

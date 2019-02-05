@@ -204,13 +204,21 @@
         .catch(err => {console.log("Error: " + err)});
       },
       saveSecretShare: function () {
+        this.errorMessage = '';
         if (this.$refs.formSecret.validate()) {
-          Legacy.saveSecretShare(this.instance.userAddress,this.secretShare)
-          .then( () => {
-            this.secretSaved = true;
-            this.feedbackMsg = "Your secret share has been saved in the contract";
-          })
-          .catch(err => {console.log("Error: " + err)});
+          let user = this.instance.userAddress;
+          this.instance.keeperData.call(user).then( keeperData => {
+            if(keeperData[1] == web3.sha3(this.secretShare)) {
+              Legacy.saveSecretShare(this.instance.userAddress,this.secretShare)
+              .then( () => {
+                this.secretSaved = true;
+                this.feedbackMsg = "Your secret share has been saved in the contract";
+              })
+              .catch(err => {console.log("Error: " + err)});
+            } else {
+              this.errorMessage = "The secret share is not valid.";
+            }
+          });
         }
       }
     }

@@ -1,5 +1,5 @@
 <template>
-  <v-card class="backgroundSecondaryCardColor mb-3">
+  <v-card class="backgroundSecondaryCardColor mb-3 pt-2 px-1">
     <v-flex d-flex xs12>
       <v-layout align-center row wrap>
         <v-flex d-flex xs12 sm2>

@@ -52,6 +52,7 @@
         </v-flex>
         <v-flex xs12 v-if="messageTestatorAlive">
           <v-alert
+            :value="true"
             type="warning"
             dismissible
             transition="scale-transition"
@@ -61,6 +62,7 @@
         </v-flex>
         <v-flex xs12 v-if="messageIsNotBeneficiary">
           <v-alert
+            :value="true"
             type="warning"
             dismissible
             transition="scale-transition"
@@ -140,6 +142,7 @@
         beneficiaryMessage: '',
         personalKey: '',
         shares: [],
+        unknownShares: 0,
         sharedSecret: '',
         ethAddressRules: [
           v => !!v || 'ETH address is required',
@@ -153,13 +156,13 @@
 
   methods: {
       submit: function () {
+        this.sharedSecret = '';
         if (this.$refs.form.validate()) {
           Legacy.getSmartContractInstance(this.smartContractAddress).then(instance => {
             if(instance) {
               this.instance = instance;
               // check if user is one of the beneficiaries in this contract
-              this.isBeneficiary(instance.userAddress)
-              this.getSharedSecret(); // TODO: place correctly
+              this.isBeneficiary(instance.userAddress);
             }
           }).catch(err => {
             this.errorMessage = "Could not find contract at given address.";
@@ -170,6 +173,7 @@
       isBeneficiary: function (userAddress) {
         Legacy.isBeneficiary(userAddress).then(isBeneficiary => {
           if(isBeneficiary) {
+            console.log("user is a beneficiary of this contract.")
             this.messageIsNotBeneficiary = '';
             this.getProofOfLife();
           } else {
@@ -210,7 +214,8 @@
         this.instance.k().then(k => {
           var threshold = k.toNumber();
           this.instance.getSecretKeepers().then(keepers => {
-            for (var i = 0; i < keepers.length; i++) {
+            let n = keepers.length;
+            for (var i = 0; i < n; i++) {
               this.instance.keeperData.call(keepers[i]).then(keeperData => {
                 if (keeperData[0]) {  // secret has been saved in contract
                   this.shares.push(keeperData[0]);
@@ -228,6 +233,13 @@
                     }
                     this.sharedSecret = Buffer.from(hexSecret, 'hex').toString('utf8');
                   }
+                } else {
+                  this.unknownShares++;
+                  if (this.unknownShares > n - threshold) {
+                    console.log(this.unknownShares + ' ' + n + ' ' + threshold);
+                    this.errorMessage = "Not enough shares to retrieve " +
+                      "the shared secret.";
+                  }
                 }
               });
             }  // end for
@@ -236,7 +248,6 @@
       },  // getSharedSecret
 
       generateInfuraUrl: function () {
-        console.log("url : " + this.beneficiaryCID.path);
         return "https://ipfs.infura.io/ipfs/" + this.beneficiaryCID;
       },
 
@@ -252,7 +263,7 @@
           console.log("Plaintext: " +  this.beneficiaryMessage);
           if (err) {
             console.error(err);
-            this.errorMessage(err);
+            this.errorMessage = err;
           }
         })
       },
