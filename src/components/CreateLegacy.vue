@@ -463,13 +463,14 @@
         return arr;
       },
       buildShareHashArray: function () {
+        const crypto = require('crypto');
         let nShares = parseInt(this.secretKeepers.length);
         let threshold = parseInt(this.k);
         let hexSecret = Buffer.from(this.secretPhrase).toString('hex');
-        // let checksum = crypto.createHash('sha256').update(hexSecret).digest('hex').substr(56);
-        // let checkedHexSecret = hexSecret + checksum;
-        let secretShares = shamir.generateShares(hexSecret, nShares, threshold);
-        var arr = []
+        let checksum = crypto.createHash('sha256').update(hexSecret).digest('hex').substr(56);
+        let checkedHexSecret = hexSecret + checksum;
+        let secretShares = shamir.generateShares(checkedHexSecret, nShares, threshold);
+        let arr = []
         for(var i = 0; i < nShares; i++) {
           arr.push(web3.sha3(secretShares[i]));
           this.secretKeepers[i].secretShare = secretShares[i];
