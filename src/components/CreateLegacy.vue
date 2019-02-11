@@ -227,7 +227,7 @@
           </v-flex>
           <v-flex
             v-for="(beneficiary, i) in beneficiaries"
-            :key="i"
+            :key="`B-${i}`"
           >
             <v-card color="#1262B2">
               <v-card-title class="text-sm-left" primary-title>
@@ -261,7 +261,7 @@
           </v-flex>
           <v-flex
             v-for="(keeper, j) in secretKeepers"
-            :key="j"
+            :key="`SK-${j}`"
           >
             <v-card color="#1262B2">
               <v-card-title class="text-sm-left" primary-title>
@@ -389,7 +389,8 @@
                 this.isLoading = false;
                 this.instance = instance;
                 this.feedbackMsg = "Your messages have been successfully stored.";
-                // TODO: scroll to result
+                document.getElementById('result').
+                  scrollIntoView({behavior: "smooth", block: "center"});
               }).catch(err => {
                 this.isLoading = false;
                 this.contractCreationError = true;
