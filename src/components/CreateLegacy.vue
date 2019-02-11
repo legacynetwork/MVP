@@ -2,125 +2,172 @@
   <v-container grid-list-md>
     <v-layout row wrap>
       <v-flex xs12 sm10 offset-sm1 >
-        <h2 class="display-2  mb-3">Create a Legacy</h2>
+        <h2 class="display-2  mb-3">Setup your Legacy Contract</h2>
         <v-divider></v-divider>
+
         <v-form ref="form">
-          <div class="backgroundPrimaryCardColor">
-            <v-card-title class="text-sm-left pb-0" primary-title>
-              <h3 class="display-1 pl-4 mb-3">Your beneficiaries</h3>
-              <v-card-text class="pb-0 pt-0">
-                <v-flex
-                  v-for="(row, i) in beneficiaries"
-                  :key="`A-${i}`"
-                >
-                  <v-card class="backgroundSecondaryCardColor">
-                    <v-card-title class="text-sm-left pb-0" primary-title>
-                      <v-card-text class="pt-0">
-                        <v-layout align-center row wrap>
-                          <v-flex xs12 sm1>
-                            <v-icon size="50">account_box</v-icon>
-                          </v-flex>
-                          <v-flex d-flex xs12 sm4>
-                            <v-text-field
-                              v-model="row.ethAddress"
-                              label="Beneficiary address"
-                              :error-messages="ethAddressErrors"
-                              :counter="42"
-                              dark
-                              :rules="ethAddressRules"
-                            ></v-text-field>
-                            </v-flex>
-                            <v-flex d-flex xs12 sm6>
-                              <v-textarea
-                                v-model="row.beneficiaryMessage"
-                                :error-messages="newMessageErrors"
-                                :rules="newMessageRules"
-                                label="Write a message to your beneficiary..."
-                                auto-grow
-                                rows="1"
-                                dark
-                                required
-                              ></v-textarea>
-                            </v-flex>
-                            <v-layout row wrap class="text-align-center">
-                              <v-flex xs12 sm1 mr-2>
-                                <v-icon size="50">vpn_key</v-icon>
-                              </v-flex>
-                              <v-flex d-flex xs12 sm7>
-                                <v-text-field v-model="row.personalKey"
-                                  label="Your beneficiary's personal decryption key"
-                                ></v-text-field>
-                              </v-flex>
-                            </v-layout>
-                            <v-flex d-flex xs12 sm1>
-                              <v-btn
-                                @click="removeEthAddress(`A-${i}`);"
-                                color="error"
-                                flat
-                              >
-                                <v-icon>clear</v-icon>
-                              </v-btn>
 
-                            </v-flex>
-                          </v-layout>
-                        </v-card-text>
-                      </v-card-title>
-                    </v-card>
-                </v-flex>
-              </v-card-text>
-
-              <v-flex text-xs-center text-md-right>
-                <v-btn
-                  @click="addBeneficiary"
-                  color="grey"
-                  flat
-                  value="recent"
-                  class="warning"
-                  fab
-                >
-                  <v-icon>add</v-icon>
-                </v-btn>
-              </v-flex>
-            </v-card-title>
-          </div>
-          <div class="backgroundPrimaryCardColor mt-5">
-            <v-card-title class="text-sm-left" primary-title >
-              <h3 class="display-1 pl-4 mb-3">Contract settings</h3>
+          <!-- "Your Beneficiaries" section -->
+          <h3 class="display-1 pl-4 mb-3 mt-5">Your beneficiaries</h3>
+          <v-flex
+            v-for="(row, i) in beneficiaries"
+            :key="`A-${i}`"
+          >
+            <v-card class="backgroundSecondaryCardColor mb-3">
               <v-card-text class="pb-0 pt-0">
-                <v-flex d-flex xs12>
-                  <v-card class="backgroundSecondaryCardColor">
-                    <v-card-title class="text-sm-left" primary-title>
-                      <span class="headline">Proof of Life Timer</span><br>
-                      <v-card-text class="pb-0 pt-0">
-                        <v-layout align-center row wrap>
-                          <v-flex d-flex xs12 sm1>
-                            <v-icon size="50">timelapse</v-icon>
-                          </v-flex>
-                          <v-flex d-flex xs12 sm8>
-                          <p> In order for the contract to know that you are still
-                            alive, you'll need to provide us proof of life regularly by reseting a timer.
-                            Tell us how long (in  days) you want this timer to be (eg. 30).</p>
-                          </v-flex>
-                          <v-flex d-flex xs12 sm3>
-                            <v-text-field
-                              v-model="tPol"
-                              outline
-                              height="100"
-                              label="Time in days"
-                              :error-messages="tPolErrors"
-                              :rules="tPolRules"
-                              dark
-                              class="inputNumber"
-                            ></v-text-field>
-                          </v-flex>
-                        </v-layout>
-                      </v-card-text>
-                    </v-card-title>
-                  </v-card>
-                </v-flex>
+                <v-layout align-center row wrap>
+                  <v-flex xs12 sm1>
+                    <v-icon size="50">account_box</v-icon>
+                  </v-flex>
+                  <v-flex d-flex xs12 sm4>
+                    <v-text-field
+                      v-model="row.ethAddress"
+                      label="Ethereum address"
+                      :counter="42"
+                      dark
+                      :rules="ethAddressRules"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex d-flex xs12 sm6>
+                    <v-textarea
+                      v-model="row.beneficiaryMessage"
+                      :rules="newMessageRules"
+                      label="Write a message to your beneficiary..."
+                      auto-grow
+                      rows="1"
+                      dark
+                      required
+                    ></v-textarea>
+                  </v-flex>
+                  <v-layout row wrap class="text-align-center">
+                    <v-flex xs12 sm1 mr-2>
+                      <v-icon size="50">vpn_key</v-icon>
+                    </v-flex>
+                    <v-flex d-flex xs12 sm7>
+                      <v-text-field
+                        v-model="row.personalKey"
+                        label="Your beneficiary's personal decryption key"
+                        required
+                        :rules="secretRules"
+                      ></v-text-field>
+                    </v-flex>
+                  </v-layout>
+                  <v-flex d-flex xs12 sm1>
+                    <v-btn
+                      @click="removeEthAddress(`${i}`);"
+                      color="error"
+                      flat>
+                      <v-icon>clear</v-icon>
+                    </v-btn>
+                  </v-flex>
+                </v-layout>
               </v-card-text>
-            </v-card-title>
-          </div>
+            </v-card>
+          </v-flex>
+
+          <v-flex text-xs-center text-md-right>
+            <v-btn
+              @click="addBeneficiary"
+              color="grey"
+              flat
+              value="recent"
+              class="warning"
+              fab>
+              <v-icon>add</v-icon>
+            </v-btn>
+          </v-flex>
+
+          <!-- "Your Secret Keepers" section -->
+          <h3 class="display-1 pl-4 mb-3">Your Secret Keepers</h3>
+          <v-flex xs12>
+            <p>You must add at least two secret keepers. We recommend three or
+              more. Be sure to choose people you trust.</p>
+          </v-flex>
+            <v-flex
+              v-for="(row, i) in secretKeepers"
+              :key="`K-${i}`"
+            >
+              <v-card class="backgroundSecondaryCardColor mb-3">
+                <v-card-text class="pt-0">
+                  <v-layout align-center row wrap>
+                    <v-flex xs12 sm1>
+                      <v-icon size="50">account_box</v-icon>
+                    </v-flex>
+                    <v-flex d-flex xs12 sm4>
+                      <v-text-field
+                        v-model="row.ethAddress"
+                        label="Ethereum address"
+                        :counter="42"
+                        dark
+                        :rules="ethAddressRules"
+                      ></v-text-field>
+                    </v-flex>
+                    <v-flex d-flex xs12 sm1 offset-sm6>
+                      <v-btn
+                        @click="removeSecretKeeper(`${i}`);"
+                        color="error"
+                        flat>
+                        <v-icon>clear</v-icon>
+                      </v-btn>
+                    </v-flex>
+                  </v-layout>
+                </v-card-text>
+              </v-card>
+            </v-flex>
+
+          <v-flex text-xs-center text-md-right>
+            <v-btn
+              @click="addSecretKeeper"
+              color="grey"
+              flat
+              value="recent"
+              class="warning"
+              fab
+            >
+              <v-icon>add</v-icon>
+            </v-btn>
+          </v-flex>
+
+          <!-- "Contract settings" section -->
+          <h3 class="display-1 pl-4 mb-2">Contract settings</h3>
+          <ContractParameterCard
+            label="Time in days"
+            headline="Proof of Life Timer"
+            helperText="In order for the contract to know that you are still
+              alive, you'll need to provide us proof of life regularly by
+              reseting a timer. Tell us how long (in  days) you want this timer
+              to be (eg. 30)."
+            icon="timelapse"
+            v-model="tPol"
+            inputType="inputNumber"
+            :rules="tPolRules"
+          />
+
+          <ContractParameterCard
+            label="Recovery threshold"
+            headline="Recovery Threshold"
+            helperText="Tell us what is the minimum number of secret keepers
+            required to unlock your Legacy contract. You must choose a number
+            <code>k</code> such that <code>2 <= k <= n</code>, where
+            <code>n</code> is the total number of secret keepers."
+            icon="lock"
+            v-model="k"
+            inputType="inputNumber"
+            :rules="kRules"
+          />
+
+          <ContractParameterCard
+            label="Your secret phrase"
+            headline="Your Secret Phrase"
+            helperText="Insert a random secret phrase, it will be used to
+                  generate the shared keys that you will then distribute
+                  to your secret keepers. We recommend to destroy it or keep
+                  it to yourself one we are done."
+            icon="vpn_key"
+            v-model="secretPhrase"
+            :rules="secretRules"
+          />
+
           <v-flex>
             <v-alert
               :value="true"
@@ -180,7 +227,7 @@
           </v-flex>
           <v-flex
             v-for="(beneficiary, i) in beneficiaries"
-            :key=i
+            :key="`B-${i}`"
           >
             <v-card color="#1262B2">
               <v-card-title class="text-sm-left" primary-title>
@@ -212,9 +259,38 @@
               </v-card-text>
             </v-card>
           </v-flex>
+          <v-flex
+            v-for="(keeper, j) in secretKeepers"
+            :key="`SK-${j}`"
+          >
+            <v-card color="#1262B2">
+              <v-card-title class="text-sm-left" primary-title>
+                <v-layout row wrap align-center>
+                  <v-flex d-flex xs12 md1>
+                    <v-icon size="50">account_box</v-icon>
+                  </v-flex>
+                  <v-flex d-flex xs12 md4 class="headline">
+                    Secret Keeper {{j+1}}:
+                  </v-flex>
+                  <v-flex d-flex xs12 md7 class="fontLarge">
+                    {{keeper.ethAddress}}
+                  </v-flex>
+                </v-layout>
+              </v-card-title>
+              <v-card-text class="pt-0">
+                <v-layout row wrap align-center class="fontLarge">
+                  <v-flex xs12 md7 offset-md5 text-xs-left>
+                    <v-icon size="30" class="mr-1">vpn_key</v-icon>
+                    Secret share: <i>{{keeper.secretShare}}</i>
+                  </v-flex>
+                </v-layout>
+              </v-card-text>
+            </v-card>
+          </v-flex>
         </v-flex>
       </v-flex>
     </v-layout>
+
   </v-container>
 </template>
 
@@ -222,14 +298,13 @@
   import Legacy from '@/js/legacy'
   import ipfs from "@/js/ipfs"
   import util from "@/js/util"
+  import shamir from "@/js/shamir"
+  import ContractParameterCard from '@/components/ContractParameterCard'
 
-   export default {
+  export default {
     data () {
       return {
         tPol: '',
-        newMessageErrors: '',
-        ethAddressErrors: '',
-        tPolErrors: '',
         instance: {},
         isLoading: false,
         beneficiaries: [{
@@ -261,11 +336,30 @@
           v => /^(0x){1}[0-9a-fA-F]{40}$/i.test(v) || 'Please input a valid address'
         ],
         contractCreationError: false,
-        contractCreationErrorMsg: "Something went wrong. Please try again later."
+        contractCreationErrorMsg: "Something went wrong. Please try again later.",
+        secretKeepers: [{
+          ethAddress: "",
+          secretShare: "",
+          secretShareHash: ""
+        }],
+        k: "",
+        kRules: [
+          v => !!v || 'This field is required',
+          v => /^[0-9]+$/.test(v) || 'A number is required',
+          v => v >= 2 || 'Please choose a number greater or equal than 2',
+          v => v <= this.secretKeepers.length || "Please choose a number smaller or equal than the total number of keepers in your contract"
+        ],
+        secretPhrase: "",
+        secretRules: [
+          v => !!v || 'This field is required'
+        ]
       }
     },
     created: function () {
       Legacy.init();
+    },
+    components: {
+      ContractParameterCard
     },
     methods: {
       submit () {
@@ -284,14 +378,19 @@
               this.ipfsHashs = ipfsHashs;
               Legacy.createInstance(
                 this.tPol,
-                this.formatBeneficiaryAddresses(this.beneficiaries),
-                this.formatIpfsHashs(ipfsHashs))
-              .then(instance => {
+                this.buildAddressArray(this.beneficiaries),
+                this.buildCidArray(ipfsHashs),
+                this.buildKeyHashArray(),
+                this.buildAddressArray(this.secretKeepers),
+                this.buildShareHashArray(),
+                this.k
+              ).then(instance => {
                 console.log("Contract successfully deployed: "+ instance);
                 this.isLoading = false;
                 this.instance = instance;
                 this.feedbackMsg = "Your messages have been successfully stored.";
-                // TODO: scroll to result
+                document.getElementById('result').
+                  scrollIntoView({behavior: "smooth", block: "center"});
               }).catch(err => {
                 this.isLoading = false;
                 this.contractCreationError = true;
@@ -313,6 +412,11 @@
           },
           personalKey: ""
         }];
+        this.secretKeepers = [{
+          ethAddress: "",
+          secretShare: "",
+          secretShareHash: ""
+        }];
       },
       getMessagesToUploadFromBeneficiaries: function(beneficiaries){
         let beneficiariesMessages = [];
@@ -320,27 +424,30 @@
         let key = "";
         let CryptoJS = require("crypto-js");
         for(var i=0; i < beneficiaries.length; i++ ){
-          var messageTimeStamp = "\n\nMessage created: " + new Date() + " " + i;
+          var messageTimeStamp = "\n\nMessage timestamp: " + new Date() + " " + i;
           msgToUpload =  beneficiaries[i].beneficiaryMessage + messageTimeStamp;
           if(beneficiaries[i].personalKey) {
             key = beneficiaries[i].personalKey;
+            // first encrytion layer
             msgToUpload =  CryptoJS.AES.encrypt(msgToUpload, key).toString();
+            // second encryption layer
+            msgToUpload =  CryptoJS.AES.encrypt(msgToUpload, this.secretPhrase).toString();
             console.log("msg to upload:" +  msgToUpload);
           }
           beneficiariesMessages.push({
             content: Buffer.from(msgToUpload)
-          })
+          });
         }
         return beneficiariesMessages;
       },
-      formatBeneficiaryAddresses: function(beneficiaries) {
-        var beneficiariesAddress = [];
-        for(var i=0; i < beneficiaries.length; i++ ){
-          beneficiariesAddress.push(beneficiaries[i].ethAddress);
+      buildAddressArray: function(arr) {
+        var addressArr = [];
+        for(var i=0; i < arr.length; i++ ){
+          addressArr.push(arr[i].ethAddress);
         }
-        return beneficiariesAddress;
+        return addressArr;
       },
-      formatIpfsHashs: function(ipfsHashs) {
+      buildCidArray: function (ipfsHashs) {
         console.log("IPFS hash:", ipfsHashs);
         var ipfsHashsList = [];
         for(var i=0; i < ipfsHashs.length; i++ ){
@@ -349,8 +456,29 @@
         }
         return ipfsHashsList;
       },
+      buildKeyHashArray: function () {
+        var arr = [];
+        for(var i=0; i<this.beneficiaries.length; i++){
+          arr.push(web3.sha3(this.beneficiaries[i].personalKey));
+        }
+        return arr;
+      },
+      buildShareHashArray: function () {
+        const crypto = require('crypto');
+        let nShares = parseInt(this.secretKeepers.length);
+        let threshold = parseInt(this.k);
+        let hexSecret = Buffer.from(this.secretPhrase).toString('hex');
+        let checksum = crypto.createHash('sha256').update(hexSecret).digest('hex').substr(56);
+        let checkedHexSecret = hexSecret + checksum;
+        let secretShares = shamir.generateShares(checkedHexSecret, nShares, threshold);
+        let arr = []
+        for(var i = 0; i < nShares; i++) {
+          arr.push(web3.sha3(secretShares[i]));
+          this.secretKeepers[i].secretShare = secretShares[i];
+        }
+        return arr;
+      },
       addBeneficiary: function() {
-        this.feedbackMsg = '';
         this.beneficiaries.push({
           ethAddress: "",
           beneficiaryMessage: "",
@@ -363,10 +491,19 @@
       },
       removeEthAddress: function(index) {
         this.beneficiaries.splice(index, 1);
-        this.feedbackMsg = '';
       },
       generateInfuraUrl: function (CID) {
         return "https://ipfs.infura.io/ipfs/" + this.ipfsHashs[CID].path;
+      },
+      addSecretKeeper: function() {
+        this.secretKeepers.push({
+          ethAddress: "",
+          secretShare: "",
+          secretShareHash: ""
+        });
+      },
+      removeSecretKeeper: function(index) {
+        this.secretKeepers.splice(index,1);
       }
     }
   }
@@ -395,8 +532,5 @@
 .fileContainer [type=file] {
     cursor: pointer;
 }
-.v-input.inputNumber input{
-  font-size:50px;
-  max-height: 100px;
-}
+
 </style>

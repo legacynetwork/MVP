@@ -11,7 +11,15 @@ const Legacy = {
     this.contract.setProvider(window.web3.currentProvider);
   },
 
-  createInstance: function (tPol, beneficiaryAddresses, beneficiaryMessages) {
+  createInstance: function (
+    tPol,
+    beneficiaryAddresses,
+    beneficiaryMessages,
+    benefKeyHashes,
+    keeperAddresses,
+    keeperShareHahes,
+    k
+  ) {
     let self = this;
 
     return new Promise(function (resolve, reject) {
@@ -19,6 +27,10 @@ const Legacy = {
         tPol,
         beneficiaryAddresses,
         beneficiaryMessages,
+        benefKeyHashes,
+        keeperAddresses,
+        keeperShareHahes,
+        k,
         {from: window.web3.eth.accounts[0], gas: 3000000}
       ).then(instance => {
         self.instance = instance;
@@ -37,11 +49,10 @@ const Legacy = {
     return new Promise(function (resolve, reject) {
       self.contract.at(smartContractAddress).then(instance => {
         self.instance = instance;
-        console.log("Contract found at address: " + instance.address);
         instance.userAddress = web3.eth.accounts[0];
         resolve(instance);
       }).catch(err => {
-        console.error("An error ocurred while retrieving the contract: " + err);
+        console.error(err);
         reject(err);
       });
     });
@@ -134,7 +145,9 @@ const Legacy = {
     return new Promise((resolve, reject) => {
       self.instance.giveProofOfLife(
         {from: window.web3.eth.accounts[0]}
-      ).catch(err => {
+      )
+      .then(() => {resolve();})
+      .catch(err => {
         reject(err);
       });
     });
@@ -147,7 +160,9 @@ const Legacy = {
       self.instance.setPoLTimerLength(
         tPol,
         {from: window.web3.eth.accounts[0]}
-      ).catch(err => {
+      )
+      .then(() => {resolve();})
+      .catch(err => {
         reject(err);
       });
     });
@@ -209,7 +224,35 @@ const Legacy = {
         reject(err);
       });
     });
+  },
+
+  isKeeper: function (userAddress) {
+    let self = this;
+    return new Promise((resolve, reject) => {
+      self.instance.isKeeper(userAddress)
+      .then(isKeeper => {
+        resolve(isKeeper);
+      }).catch(err => {
+        reject(err);
+      });
+    });
+  },
+
+  saveSecretShare: function (keeperAdd, secretShare) {
+    let self = this;
+    return new Promise((resolve, reject) => {
+      self.instance.saveSecretShare(
+        keeperAdd,
+        secretShare,
+        {from: window.web3.eth.accounts[0]}
+      )
+      .then(() => {resolve();})
+      .catch(err => {
+        reject(err);
+      });
+    });
   }
+
 }
 
 export default Legacy

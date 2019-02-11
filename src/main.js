@@ -8,7 +8,7 @@ import router from './router'
 
 Vue.use(Vuetify, {
   theme: {
-    primary: 'white',
+    primary: '#FFFFFF',
     secondary: '#76B4FA',
     accent: '#FFF10D',
     error: '#BF1E13',
